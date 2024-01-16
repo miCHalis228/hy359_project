@@ -1,0 +1,32 @@
+<form id="loginForm" name="loginForm" onsubmit='return validateLoginForm();'>
+	<h1>Login Form</h1>
+	<div id="error"></div>
+	<label for="username">username:</label><br>
+	<div class="field username">
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-user"></i>
+			<input id="username" name="username"
+				   placeholder="*Username" required
+				   type="text">
+		</div>
+	</div>
+
+	<label for="password">password:</label><br>
+	<div class="field password">
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-lock"></i>
+			<input id="password" name="password"
+				   placeholder="*Password" required
+				   type="password">
+			<i class="password-icon icon fa fa-fw fa-eye" onclick="togglePassword('password', this)"></i>
+			<br><br>
+		</div>
+	</div>
+	<input class="button" type="submit" value="Login">
+<!--	<button class="test button" id="showRegistrationFromLogin" onclick="showRegistrationForm()" style="color: red"></button>-->
+	<div id="signup">
+		<p>Not registered yet?</p>
+		<p>Create DB account</p>
+		<button class="test button" type="button" id="showRegistrationFromLogin" onclick="showRegistrationForm()" >Register Now</button>
+	</div>
+</form>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="js/ajaxREST.js" defer></script>
+    <script src="js/ajax.js" defer></script>
+    <link rel="stylesheet" href="css/client.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+<div id="demo">
+    <h2>Test REST</h2>
+    <div class="row">
+        <div class="column column1Width" id="choices" style="background-color:#ADD8E6;">
+            <button id="back-to-main" onclick="goBackToMain()"> Main page</button>
+			<form id="myForm" name="myForm" onsubmit='addPet();return false;'>
+            <h3> POST Request</h3>
+			<!-- Additional fields that might be part of your Pet class -->
+			<label for='pet_id'>Pet ID:</label>
+			<input id='pet_id' type='text' name='pet_id' minlength="10" maxlength="10" required><br>
+
+			<label for='owner_id'>Owner ID:</label>
+			<input id='owner_id' type='number' name='owner_id' required><br>
+
+            <label for='name'>Pet Name:</label>
+            <input id='name' type='text' name='name' required><br>
+
+            <label for='type'>Pet Type:</label>
+            <input id='type' type='text' name='type' required><br>
+
+            <label for='breed'>Pet Breed:</label>
+            <input id='breed' type='text' name='breed' required><br>
+
+            <label for='gender'>Pet Gender:</label>
+            <input id='gender' type='text' name='gender' required><br>
+
+            <label for='birthyear'>Pet Birth Year:</label>
+            <input id='birthyear' type='number' name='birthyear' required><br>
+
+            <label for='weight'>Pet Weight:</label>
+            <input id='weight' type='number' name='weight' required><br>
+
+            <label for='description'>Pet Description:</label>
+            <input id='description' type='text' name='description' required><br>
+
+            <label for='photo'>Pet Photo:</label>
+            <input id='photo' type='text' name='photo' required><br>
+            <input type='submit' class="button" value="Add pet"> <!-- Press this to submit form -->
+            </form>
+
+            <h3> 1. Just GET</h3>
+            <button type="button" onclick="getPets()" class="button">Get Pets</button>
+            <br>
+
+            <h3> 2. GET with Type AND Breed</h3>
+
+            <label for='type2'>Pet Type:</label>
+            <input id="type2" type="text"><br>
+			<label for='breed2'>Pet Brand:</label>
+			<input id="breed2" type="text"><br>
+            <button type="button" onclick="getPetsOfType_Breed()" class="button">Get Pets of Type and Breed</button>
+
+			<h3> 3. GET with Type/Breed AND weight (optional)</h3>
+
+			<label for='type3'>Pet Type:</label>
+			<input id="type3" type="text"><br>
+			<label for='breed3'>Pet Brand:</label>
+			<input id="breed3" type="text"><br>
+			<h4>Weight</h4>
+			<label for='from-weight3'>From:</label>
+<!--			^[1-9]\d*(\.\d+)?$ is number greater than 0-->
+			<input id="from-weight3" type="number" pattern="^[1-9]\d*(\.\d+)?$"><br>
+			<label for='to-weight3'>To:</label>
+			<input id="to-weight3" type="number" pattern="^[1-9]\d*(\.\d+)?$"><br>
+			<button type="button" onclick="getPetsWithWeight()" class="button">Get Pets of with weight</button>
+
+            <h3> PUT Request change weight</h3>
+            <label for='pet_id2'>Pet Name:</label>
+            <input id='pet_id2' type="text" name='pet_id2'><br>
+            <label for='new_weight'>Pet Quantity:</label>
+            <input id='new_weight' type="number" name='new_weight'><br>
+            <button type="button" onclick="updatePet()" class="button">Update Pet weight</button>
+
+            <h3> DELETE Request</h3>
+            <label for='pet_id3'>Pet ID:</label>
+            <input id='pet_id3' type="text" name='pet_id3'><br>
+            <button type="button" onclick="deletePet()" class="button">Delete Pet</button>
+        </div>
+        <div class="column column2Width" id="output" style="background-color:#fffff0;">
+            <h2>Output</h2>
+            <div id="msg"></div>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+</body>
+</html>
+

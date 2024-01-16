@@ -1,0 +1,79 @@
+.debug-container * {
+  box-sizing: border-box;
+}
+
+.debug-container table,
+.debug-container tr{
+    border: 2px solid black;
+    
+}
+.debug-container .row {
+width:100%;
+ 
+}
+
+.debug-container img {
+width:90%;
+}
+
+/* Create two equal columns that floats next to each other */
+.debug-container .column {
+  display:inline-block;
+  float: left;
+  padding: 10px;
+ /* 	text-align: center;*/
+  border: 5px solid black;
+  border-radius: 8px;
+  margin-right:2%;
+  margin-left:2%;
+  min-height:400px;
+}
+
+.debug-container .column1Width {
+width: 30%;
+}
+
+.debug-container .column3Width {
+width: 99%;
+}
+
+.debug-container .column2Width {
+width: 60%;
+}
+
+.debug-container .subColumn {
+float: left;
+  width: 45%;
+  padding: 10px;
+  border: 5px solid black;
+  border-radius: 8px;
+  margin-right:10px;
+  margin-left:10px;
+}
+
+/* Clear floats after the columns */
+.debug-container .row:after {
+  content: "";
+}
+
+
+
+.debug-container h2{
+	text-align: center;
+}
+
+.debug-container .button {
+  background-color: #ffffff; 
+  border: 5px solid black;
+  border-radius: 8px;
+  color: black;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+
