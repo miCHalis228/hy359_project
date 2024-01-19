@@ -8,10 +8,8 @@ package database.tables;
 import com.google.gson.Gson;
 import mainClasses.Booking;
 import database.DB_Connection;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +23,7 @@ import java.util.logging.Logger;
 public class EditBookingsTable {
 
     public void addBookingFromJSON(String json) throws ClassNotFoundException {
+        System.out.println(json);
         Booking r = jsonToBooking(json);
         createNewBooking(r);
     }
@@ -82,6 +81,7 @@ public class EditBookingsTable {
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();
         String updateQuery = "UPDATE bookings SET status='"+status+"' WHERE booking_id= '"+bookingID+"'";
+        System.out.println(updateQuery);
         stmt.executeUpdate(updateQuery);
         stmt.close();
         con.close();
@@ -95,8 +95,8 @@ public class EditBookingsTable {
                 + " owner_id INTEGER not NULL, "
                 + "  pet_id VARCHAR(10) not NULL, "
                 + " keeper_id INTEGER not NULL, "
-                + " fromdate DATE not NULL, "
-                + " todate DATE not NULL, "
+                + " fromDate DATE not NULL, "
+                + " toDate DATE not NULL, "
                 + " status VARCHAR(15) not NULL, "
                 + " price INTEGER not NULL, "
                 + "FOREIGN KEY (owner_id) REFERENCES petowners(owner_id), "
@@ -118,6 +118,11 @@ public class EditBookingsTable {
         try {
             Connection con = DB_Connection.getConnection();
 
+            if (hasExistingRequestedBooking(con, bor.getOwner_id())) {
+                System.out.println("A booking with status 'requested' already exists for this owner.");
+                return;
+            }
+
             Statement stmt = con.createStatement();
 
             String insertQuery = "INSERT INTO "
@@ -132,7 +137,7 @@ public class EditBookingsTable {
                      + "'" + bor.getPrice() + "'"
                     + ")";
             //stmt.execute(table);
-
+            System.out.println(insertQuery);
             stmt.executeUpdate(insertQuery);
             System.out.println("# The booking was successfully added in the database.");
 
@@ -142,5 +147,16 @@ public class EditBookingsTable {
         } catch (SQLException ex) {
             Logger.getLogger(EditBookingsTable.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private boolean hasExistingRequestedBooking(Connection con, int owner_id) throws SQLException {
+        Statement stmt = con.createStatement();
+        ResultSet rs = null;
+        String query = "SELECT * FROM bookings WHERE owner_id = '" + owner_id + "' AND status = 'requested'";
+        rs = stmt.executeQuery(query);
+        if(rs.next()){
+            return true;
+        }
+        return false;
     }
 }

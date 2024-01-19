@@ -1067,3 +1067,98 @@ $(document).ready(function () {
     // showLogin();
     // getTheme();
 });
+
+/*----------------------- Owner makes booking ------------------------------*/
+function addBooking(){
+    var xhr = new XMLHttpRequest();
+    var bookingData = {
+        owner_id: '3',
+        pet_id: '1234554321',
+        keeper_id: "3",
+        fromDate: '2024-01-20',
+        toDate: '2024-01-25',
+        price: '30'
+    };
+    var jsonString = JSON.stringify(bookingData);
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#ajaxContent').html("Successful Booking.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            // console.log(xhr.responseText);
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('POST', 'BookingServlet');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send(jsonString);
+}
+
+/*----------------------- Owner Ends booking ------------------------------*/
+function endBooking(){
+    var xhr = new XMLHttpRequest();
+    var bookingData = {
+        owner_id: '2'
+    };
+    var jsonString = JSON.stringify(bookingData);
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#ajaxContent').html("Booking finished succesfully.").removeClass('error');
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').html('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('POST', 'FinishBookingServlet');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send(jsonString);
+}
+
+/*----------------------- Owner Reviews booking ------------------------------*/
+function reviewBooking(){
+    var xhr = new XMLHttpRequest();
+    var bookingData = {
+        owner_id: '2',
+        keeper_id: "3",
+        reviewText: "Slay!",
+        reviewScore: '10'
+    };
+    var jsonString = JSON.stringify(bookingData);
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#ajaxContent').html("Booking finished succesfully.").removeClass('error');
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').html('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('POST', 'ReviewBookingServlet');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send(jsonString);
+}
+
+/*----------------------- Owner leaves message to keeper ------------------------------*/
+function leaveMessageOwner() {
+    var xhr = new XMLHttpRequest();
+    var bookingData = {
+        booking_id: '2',
+        message: "test message"
+    };
+    var jsonString = JSON.stringify(bookingData);
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#ajaxContent').html("Message send successfully.").removeClass('error');
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').html('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('POST', 'OwnerMessageServlet');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send(jsonString);
+}

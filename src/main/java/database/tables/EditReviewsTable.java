@@ -94,6 +94,11 @@ public class EditReviewsTable {
         try {
             Connection con = DB_Connection.getConnection();
 
+            if (hasExistingReview(rev.getKeeper_id(), rev.getOwner_id())) {
+                System.out.println("A review from this owner to this keeper already exists.");
+                return;
+            }
+
             Statement stmt = con.createStatement();
 
             String insertQuery = "INSERT INTO "
@@ -115,5 +120,17 @@ public class EditReviewsTable {
         } catch (SQLException ex) {
             Logger.getLogger(EditPetsTable.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private boolean hasExistingReview(int keeper_id, int owner_id) throws SQLException, ClassNotFoundException {
+        Connection con  = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet rs = null;
+        String query = "SELECT * FROM reviews WHERE owner_id = '" + owner_id + "' AND keeper_id = '" + keeper_id + "'";
+        rs = stmt.executeQuery(query);
+        if(rs.next()){
+            return true;
+        }
+        return false;
     }
 }
