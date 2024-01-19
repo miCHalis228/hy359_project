@@ -19,20 +19,41 @@
         <script src="js/utilities.js" defer></script>
         <link rel="stylesheet" href="css/cssExamples.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
         <title>miCHalis DB</title>
         <!-- <script src="jquery-3.7.1.min.js"></script> -->
     </head>
     <body>
         <div class="topnav" id="topnav">
-            <a class="active" onclick="showMain()">Main</a>
-            <a id="login-topnav" onclick="showLogin()">Login</a>
+        <a class="active" onclick="showMain()">Main</a>
+<%--            <a id="forUsers" onclick="showLogin()">For Users</a>--%>
+            <div id="login-topnav">
+                <a onclick="showLogin()">Login</a>
+                <a onclick="showKeepers()">Keepers</a>
+            </div>
             <div id="activeSession-topnav">
-                ea id="active-user-topnav" onclick="showUser()">Profile</a>
+                <a id="active-user-topnav" onclick="showUser()">Profile</a>
                 <a onclick="showUserFields()">Update Profile</a>
-                <a onclick="showPetForm()">Pets</a>
+<%--                <a onclick="showPetForm()">Pets</a>--%>
                 <a class="active debug" onclick="logout()">Logout</a>
             </div>
+            <div id="owner-activeSession-topnav">
+                <a id="owner-active-user-topnav" onclick="showOwner()">Profile</a>
+                <a onclick="showOwnerFields()">Update Profile</a>
+                <a onclick="showAvailableKeepers()">Available Keepers</a>
+                <a onclick="showPetForm()">Pets</a>
+                <a class="active debug" onclick="logoutOwner()">Logout</a>
+            </div>
+            <div id="admin-activeSession-topnav">
+                <a id="admin-active-user-topnav" onclick="showAllUsers()">Show Users</a>
+<%--                <a onclick="showPetForm()">Pets</a>--%>
+                <a onclick="showCatsAndDogs()">Cats and Dogs</a>
+                <a onclick="showPetCareRevenue()">Revenue</a>
+                <a onclick="showUserCount()">User Count</a>
+                <a class="active debug" onclick="logoutAdmin()">Logout</a>
+            </div>
+
             <a class="debug" onclick="toggleDebug()">Debug</a>
         </div>
         <div class="debug-container">

@@ -12,6 +12,10 @@ const petObject = {
     photo: "path/to/photo.jpg"
 };
 
+
+function goBackToMain(){
+    window.open('http://localhost:8080/hy359_project_war_exploded/', '_self');
+}
 function createTableFromJSON(data, i) {
     var html = "<h4>Pet " + i + "</h4><table><tr><th>Category</th><th>Value</th></tr>";
     for (const x in data) {
@@ -150,8 +154,8 @@ function getPetsWithWeight() {
         return;
     }
     let weight = "fromWeight=" + from + "&toWeight=" + to;
-    xhr.open("GET", "http://localhost:4567/pets/" + data + "?" + weight);
-    console.log("http://localhost:4567/pets/" + data + "?" + weight);
+    xhr.open("GET", "http://localhost:4567/pets/" + data + "/WithWeight?" + weight);
+    console.log("http://localhost:4567/pets/" + data + "/WithWeight?" + weight);
     xhr.setRequestHeader("Accept", "application/json");
     xhr.setRequestHeader("Content-Type", "application/json");
     xhr.send();

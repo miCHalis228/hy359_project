@@ -5,6 +5,7 @@
  */
 package database.tables;
 
+import mainClasses.PetKeeper;
 import mainClasses.PetOwner;
 import com.google.gson.Gson;
 import mainClasses.PetOwner;
@@ -13,6 +14,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import mainClasses.Booking;
@@ -42,17 +44,116 @@ public class EditPetOwnersTable {
         String json = gson.toJson(user, PetOwner.class);
         return json;
     }
-    
-   
-    
+
+
+    public ArrayList<PetOwner> getOwners() throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ArrayList<PetOwner> owners = new ArrayList<PetOwner>();
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery("SELECT * FROM petowners");
+
+            while (rs.next()) {
+                String json = DB_Connection.getResultsToJSON(rs);
+                Gson gson = new Gson();
+                PetOwner owner = gson.fromJson(json, PetOwner.class);
+                owners.add(owner);
+            }
+            return owners;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public ArrayList<String> getOwnersAdmin() throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ArrayList<String> owners = new ArrayList<String>();
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery("SELECT owner_id,username,lastname,telephone FROM petowners");
+
+            while (rs.next()) {
+                String json = DB_Connection.getResultsToJSON(rs);
+                owners.add(json);
+            }
+            return owners;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public int getOwnersCountAdmin() throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        int owners = 0;
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery("SELECT COUNT(owner_id) as ownerCount FROM petowners");
+            if (rs.next()) {
+                owners = rs.getInt("ownerCount");
+            }
+            return owners;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return -1;
+    }
+
+    public void updatePetOwner(String username, String entryToUpdate, String updatedValue) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        String update = "UPDATE petowners SET " + entryToUpdate + "='" + updatedValue + "' WHERE username = '" + username + "'";
+        stmt.executeUpdate(update);
+    }
     public void updatePetOwner(String username,String personalpage) throws SQLException, ClassNotFoundException{
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();
         String update="UPDATE petowners SET personalpage='"+personalpage+"' WHERE username = '"+username+"'";
         stmt.executeUpdate(update);
     }
-   
-    
+
+    public void deleteOwner(String id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet rs;
+        int success;
+        try {
+            success = stmt.executeUpdate("DELETE FROM messages WHERE booking_id IN" +
+                    "(SELECT booking_id FROM bookings WHERE owner_id='" + id + "')");
+            if (success == 0){
+                System.out.print("failed to delete owner from messages with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM bookings WHERE owner_id='" + id + "'");
+            if (success == 0){
+                System.out.print("failed to delete owner from bookings with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM reviews WHERE owner_id='" + id + "'");
+            if (success == 0){
+                System.out.print("failed to delete owner from reviews with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM pets WHERE owner_id='" + id + "'");
+            if (success == 0){
+                System.out.print("failed to delete owner from reviews with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM petowners WHERE owner_id='" + id + "'");
+            if (success == 0){
+                throw new ClassNotFoundException("failed to delete from petowners");
+            }
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        stmt.close();
+        con.close();
+    }
+
     public PetOwner databaseToPetOwners(String username, String password) throws SQLException, ClassNotFoundException{
          Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();

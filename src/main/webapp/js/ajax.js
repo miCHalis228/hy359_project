@@ -1,5 +1,38 @@
 var globalUserJson;
 
+function setChoicesForLoggedAdmin(userJson) {
+    document.getElementById("username").setAttribute("value", userJson.username || "");
+    document.getElementById("password").setAttribute("value", userJson.password || "");
+    globalUserJson = userJson;
+}
+function setChoicesForLoggedOwner(userJson) {
+    document.getElementById("username").setAttribute("value", userJson.username || "");
+    document.getElementById("email").setAttribute("value", userJson.email || "");
+    document.getElementById("password").setAttribute("value", userJson.password || "");
+    document.getElementById("firstname").setAttribute("value", userJson.firstname || "");
+    document.getElementById("lastname").setAttribute("value", userJson.lastname || "");
+    document.getElementById("birthdate").setAttribute("value", userJson.birthdate || "");
+
+    // Assuming the gender property in userJson is either "male" or "female"
+    if (userJson.gender === "Male") {
+        document.getElementById("male").setAttribute("checked", true);
+        document.getElementById("female").removeAttribute("checked");
+    } else if (userJson.gender === "Female") {
+        document.getElementById("female").setAttribute("checked", true);
+        document.getElementById("male").removeAttribute("checked");
+    }
+
+    const country =  userJson.country;
+    // document.getElementById("country").setAttribute("value", userJson.country || "GR");
+    document.getElementById("country").value = country;
+    document.getElementById("city").setAttribute("value", userJson.city || "");
+    document.getElementById("address").setAttribute("value", userJson.address || "");
+    document.getElementById("personalpage").setAttribute("value", userJson.personalpage || "");
+    document.getElementById("job").setAttribute("value", userJson.job || "");
+    document.getElementById("telephone").setAttribute("value", userJson.telephone || "");
+
+    globalUserJson = userJson;
+}
 function setChoicesForLoggedUser(userJson) {
     document.getElementById("username").setAttribute("value", userJson.username || "");
     document.getElementById("email").setAttribute("value", userJson.email || "");
@@ -114,20 +147,21 @@ function showLogin() {
     $('#register-message').hide();
     $("#form-container").load("login.html");
     // isLoggedIn();
-    $("ajaxContent").html("");
+    $("#ajaxContent").html("");
+}
+
+function showAdminLogin(){
+    $('#main-page-container').hide();
+    $('#register-message').hide();
+    $("#form-container").load("admin-login.html");
+    $("#ajaxContent").html("");
 }
 
 function showPetForm(){
-    // $('#main-page-container').();
     $("#ajaxContent").html("");
-    // window.open('http://localhost:8080/A3_csd4773_war_exploded/getPets', '_blank');
-    window.open('http://localhost:8080/A3_csd4773_war_exploded/client.html', '_self');
-    // $('html').load("Javascript_Client/client.html");
+    window.open('http://localhost:8080/hy359_project_war_exploded/client.html', '_self');
 }
 
-function goBackToMain(){
-    window.open('http://localhost:8080/A3_csd4773_war_exploded/', '_self');
-}
 
 function showRegistrationForm() {
     $("#form-container").load("registration.html", function () {
@@ -175,18 +209,42 @@ function registerPOST() {
     xhr.setRequestHeader('Content-type', 'application/JSON');
     xhr.send(JSON.stringify(new_user));
 }
+function getLoggedOwnerData(){
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $("#owner-active-user-data").html(createTableFromJSON(JSON.parse(xhr.responseText)));
+            $('#owner-active-user-data').show();
+            $('#owner-user-fields-container').hide();
+            $("#welcome-message").html("");
+            // not sure if needed the below let them because it works
+            $("#login-topnav").hide();
+            $("#owner-activeSession").show();
+            // $("#activeSession-topnav").show();
+            $("#form-container").empty();
+        } else if (xhr.status === 201) {
+            $("#error-message").html("error with the get request if it persists reload page or try again later");
+        } else if (xhr.status !== 200) {
+            $("#error-message").html("error with the get request - cannot get user data");
+            // $("#form-container").load("login.html");
+            //alert('Request failed. Returned status of ' + xhr.status);
+        }
+    };
+    xhr.open('GET', 'Register');
+    xhr.send();
+}
 
 function getLoggedUserData(){
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            $("#active-user-data").append(createTableFromJSON(JSON.parse(xhr.responseText)));
+            $("#active-user-data").html(createTableFromJSON(JSON.parse(xhr.responseText)));
             $('#active-user-data').show();
             $('#user-fields-container').hide();
             $("#welcome-message").html("");
             // not sure if needed the below let them because it works
             $("#login-topnav").hide();
-            $("#activeSession-topnav").show();
+            // $("#activeSession-topnav").show();
             $("#form-container").empty();
         } else if (xhr.status === 201) {
             $("#error-message").html("error with the get request if it persists reload page or try again later");
@@ -204,22 +262,35 @@ function isLoggedIn() {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            $("#ajaxContent").html("Welcome again " + JSON.parse(xhr.responseText)["username"]);
+            // $("#ajaxContent").html("Welcome again " + JSON.parse(xhr.responseText)["username"]);
             // $("#ajaxContent").append(createTableFromJSON(JSON.parse(xhr.responseText)));
-            $("#logged-user").load("activeSession.html", function () {
-                setChoicesForLoggedUser(JSON.parse(xhr.responseText));
-                $("#welcome-message").html("<h2>Welcome again " + JSON.parse(xhr.responseText)["username"] + "</h2>");
-                $("#user-fields-container").hide();
-                $("#form-container").empty();
-            });
+            if (xhr.responseText.includes("owner_id")){
+                $("#logged-user").load("activeOwnerSession.html", function () {
+                    setChoicesForLoggedOwner(JSON.parse(xhr.responseText));
+                    $("#welcome-message").html("<h2>Welcome again Owner " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+                    $("#owner-user-fields-container").hide();
+                    $("#form-container").empty();
+                    $("#owner-activeSession-topnav").show();
+                });
+            } else if (xhr.responseText.includes("keeper_id")){
+                $("#logged-user").load("activeSession.html", function () {
+                    setChoicesForLoggedUser(JSON.parse(xhr.responseText));
+                    $("#welcome-message").html("<h2>Welcome again Keeper " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+                    $("#user-fields-container").hide();
+                    $("#form-container").empty();
+                    $("#activeSession-topnav").show();
+                });
+            } else if (xhr.responseText.includes("admin_id")) {
+                $("#logged-user").load("activeSession.html", function () {
+                    setChoicesForLoggedAdmin(JSON.parse(xhr.responseText));
+                    $("#welcome-message").html("<h2>Welcome again admin " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+                    $("#user-fields-container").hide();
+                    $("#form-container").empty();
+                    $("#admin-activeSession-topnav").show();
+                });
+            }
             $("#login-topnav").hide();
-            $("#activeSession-topnav").show();
             $("#form-container").empty();
-        } else if (xhr.status === 201) {
-            $('#main-page-container').load('main-page.html');
-            $('#main-page-container').show();
-            // $("#form-container").load("login.html");
-            //alert('Request failed. Returned status of ' + xhr.status);
         } else if (xhr.status !== 200) {
             $('#main-page-container').load('main-page.html');
             $('#main-page-container').show();
@@ -228,10 +299,61 @@ function isLoggedIn() {
         }
     };
     xhr.open('GET', 'Login');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     xhr.send();
 }
 
+function adminLogin() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // $("#ajaxContent").html("Successful Login").removeClass('error');
+            // $("#ajaxContent").append(createTableFromJSON(JSON.parse(xhr.responseText)));
+            $("#logged-user").load("activeSession.html", function () {
+                //TODO check this
+                setChoicesForLoggedAdmin(JSON.parse(xhr.responseText));
+                $("#user-fields-container").hide();
+                $("#welcome-message").html("<h2>Welcome Admin, " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+            });
+            $("#login-topnav").hide();
+            $("#admin-activeSession-topnav").show();
+            $("#form-container").empty();
+        } else if (xhr.status !== 200) {
+            $("#error").html("Wrong Credentials").addClass('error');
+            //('Request failed. Returned status of ' + xhr.status);
+        }
+    };
+    var data = $('#admin-loginForm').serialize();
+    xhr.open('POST', 'AdminLogin');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send(data);
+}
+
+/*Login dependend on user type*/
 function login() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            if(xhr.responseText.includes("nothing")){
+                return;
+            } else if (xhr.responseText.includes("petkeeper")){
+                console.log("logging keeper")
+                loginKeeper();
+            } else if (xhr.responseText.includes("petowner")){
+                console.log("logging owner")
+                loginOwner();
+            }
+        } else if (xhr.status !== 200) {
+            $("#error").html("Wrong Credentials").addClass('error');
+            //('Request failed. Returned status of ' + xhr.status);
+        }
+    };
+    var data = $('#username').serialize();
+    xhr.open('GET', 'UserType?' + data);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send();
+}
+function loginKeeper() {
     var xhr = new XMLHttpRequest();
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
@@ -244,6 +366,30 @@ function login() {
             });
             $("#login-topnav").hide();
             $("#activeSession-topnav").show();
+            $("#form-container").empty();
+        } else if (xhr.status !== 200) {
+            $("#error").html("Wrong Credentials").addClass('error');
+            //('Request failed. Returned status of ' + xhr.status);
+        }
+    };
+    var data = $('#loginForm').serialize();
+    xhr.open('POST', 'Login');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send(data);
+}
+function loginOwner() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // $("#ajaxContent").html("Successful Login").removeClass('error');
+            // $("#ajaxContent").append(createTableFromJSON(JSON.parse(xhr.responseText)));
+            $("#logged-user").load("activeOwnerSession.html", function () {
+                setChoicesForLoggedOwner(JSON.parse(xhr.responseText));
+                $("#owner-user-fields-container").hide();
+                $("#welcome-message").html("<h2>Welcome, " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+            });
+            $("#login-topnav").hide();
+            $("#owner-activeSession-topnav").show();
             $("#form-container").empty();
         } else if (xhr.status !== 200) {
             $("#error").html("Wrong Credentials").addClass('error');
@@ -276,6 +422,86 @@ function logout() {
     xhr.send();
 }
 
+function logoutOwner() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // not sure if needed the below let them because it works
+            $("#login-topnav").show();
+            $("#owner-activeSession-topnav").hide();
+
+            $("#ajaxContent").html("Successful Owner Logout");
+            $("#form-container").load("login.html");
+            $("#logged-user").empty();
+        } else if (xhr.status !== 200) {
+            alert('Request failed. Returned status of ' + xhr.status);
+        }
+    };
+    xhr.open('POST', 'Logout');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send();
+}
+
+function logoutAdmin() {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // not sure if needed the below let them because it works
+            $("#login-topnav").show();
+            $("#admin-activeSession-topnav").hide();
+
+            $("#ajaxContent").html("Successful Admin Logout");
+            $("#form-container").load("login.html");
+            $("#logged-user").empty();
+        } else if (xhr.status !== 200) {
+            alert('Request failed. Returned status of ' + xhr.status);
+        }
+    };
+    xhr.open('POST', 'Logout');
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.send();
+}
+
+function updateOwnerFields(userJson) {
+    updateOwner();
+    return false;
+}
+function updateOwner() {
+    var xhr = new XMLHttpRequest();
+    let updateForm = document.getElementById('owner-user-fields-form');
+    let formData = new FormData(updateForm);
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const responseData = JSON.parse(xhr.responseText);
+            $('#owner-user-fields-container').html("Data updated Successfully. Reload to see it")
+            $('#ajaxContent').html("Successful Owner update. New data").removeClass('error');
+            $('#ajaxContent').append(createTableFromJSON(responseData));
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+    const updated_owner = {};
+    formData.forEach((value, key) => {
+        if (globalUserJson[key] !== value) {
+            updated_owner[key] = value;
+        }
+    });
+    if (Object.entries(updated_owner).length === 0){
+        $('#ajaxContent').html("Nothing to be updated").addClass('error');
+        return;
+    } else if (updated_owner["address"] !== undefined){
+        if(getCoordinates() === undefined){
+            alert("user needs to verify and have valid coordinates");
+            return false;
+        }
+    }
+    updated_owner["username"] = globalUserJson["username"];
+
+    xhr.open('POST', 'UpdateOwner');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send(JSON.stringify(updated_owner));
+}
 function updateUserFields(userJson) {
     updateUser();
     return false;
@@ -325,9 +551,518 @@ function updateUser() {
     xhr.send(JSON.stringify(updated_user));
 }
 
+function showAllUsers() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const parsedObjects = [];
+            // $('#active-user-data').html("Database Users")
+            // $("#active-user-data").append(xhr.responseText);
+            // Split the response text into an array of JSON strings
+            var jsonStrings = xhr.responseText.split('}{');
+
+            // Iterate over each JSON string, parse it, and add to the array
+            jsonStrings.forEach(function (jsonString, index) {
+                // Add back the missing curly brace for all but the first string
+                if (index > 0) {
+                    jsonString = '{' + jsonString;
+                }
+
+                // Add back the missing curly brace for all but the last string
+                if (index < jsonStrings.length - 1) {
+                    jsonString = jsonString + '}';
+                }
+
+                // Parse the JSON string
+                var jsonObject = JSON.parse(jsonString);
+
+                // Add the parsed object to the array
+                parsedObjects.push(jsonObject);
+            });
+
+            createKeeperOwnerTables(parsedObjects);
+
+            $('#active-user-data').show();
+            $('#user-fields-container').hide();
+            $("#welcome-message").html("");
+            // not sure if needed the below let them because it works
+            // $("#login-topnav").hide();
+            // $("#activeSession-topnav").show();
+            // $("#form-container").empty();
+            // const responseData = JSON.parse(xhr.responseText);
+            // $('#user-fields-container').append(xhr.responseText);
+            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+            const responseData = JSON.parse(xhr.responseText);
+            if (responseData !== "")
+                for (const x in responseData) {
+                    $('#ajaxContent').append("<p style='color:red'>" + x + "=" + responseData[x] + "</p>");
+                }
+        }
+    };
+
+    xhr.open('GET', 'AdminUsers');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+function showCatsAndDogs() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // $('#active-user-data').html(xhr.responseText)
+            $('#active-user-data').show();
+            $('#user-fields-container').hide();
+            $("#welcome-message").html("");
+            createPetChart(xhr.responseText);
+            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+            const responseData = JSON.parse(xhr.responseText);
+            if (responseData !== "")
+                for (const x in responseData) {
+                    $('#ajaxContent').append("<p style='color:red'>" + x + "=" + responseData[x] + "</p>");
+                }
+        }
+    };
+
+    xhr.open('GET', 'AdminPetCount');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+function showPetCareRevenue() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // $('#active-user-data').html(xhr.responseText)
+            $('#active-user-data').show();
+            $('#user-fields-container').hide();
+            $("#welcome-message").html("");
+
+            createRevenueChart(xhr.responseText);
+            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+            const responseData = JSON.parse(xhr.responseText);
+            if (responseData !== "")
+                for (const x in responseData) {
+                    $('#ajaxContent').append("<p style='color:red'>" + x + "=" + responseData[x] + "</p>");
+                }
+        }
+    };
+
+    xhr.open('GET', 'AdminRevenue');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+function showUserCount() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // $('#active-user-data').html(xhr.responseText)
+            $('#active-user-data').show();
+            $('#user-fields-container').hide();
+            createUserCountChart(xhr.responseText);
+            $("#welcome-message").html("");
+            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+            // const responseData = JSON.parse(xhr.responseText);
+            // if (responseData !== "")
+            //     for (const x in responseData) {
+            //         $('#ajaxContent').append("<p style='color:red'>" + x + "=" + responseData[x] + "</p>");
+            //     }
+            $('#ajaxContent').append(xhr.responseText);
+        }
+    };
+
+    xhr.open('GET', 'AdminUserCount');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+function deleteUser(userType, id){
+
+    var userConfirmed = confirm("Are you sure you want to continue?");
+
+    if (userConfirmed) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.onload = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                $('#ajaxContent').html("Successful deletion.").removeClass('error');
+                $('#ajaxContent').append(xhr.responseText);
+                showAllUsers();
+            } else if (xhr.status !== 200) {
+                $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+            }
+        };
+        const params = "user="+userType+"&id="+id;
+        xhr.open('GET', 'AdminDeleteUser?'+params);
+        xhr.setRequestHeader('Content-type', 'application/JSON');
+        xhr.send();
+    }
+}
+
+function createUsersTable(containerId, headers, rows) {
+    const container = document.getElementById(containerId);
+    if (container===undefined) {console.log("returning");return;}
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    //Delete header
+    const th = document.createElement('th');
+    th.textContent = "Delete Users";
+    headerRow.appendChild(th);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        const td = document.createElement('td');
+        td.innerHTML="<a onclick='deleteUser(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Delete " + row[headers[0]];
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Append the table to the container
+    container.appendChild(table);
+}
+
+function createKeeperOwnerTables(data){
+    const container = document.getElementById("active-user-data");
+    container.innerHTML="<div id='petKeepersTable'></div><div id='petOwnersTable'></div>";
+    // Headers for Pet Keepers table
+    const petKeeperHeaders = ['keeper_id', 'username', 'lastname', 'telephone'];
+
+    // Filter data for Pet Keepers
+    const petKeeperData = data.filter(item => 'keeper_id' in item);
+
+    // Create Pet Keepers table
+    createUsersTable('petKeepersTable', petKeeperHeaders, petKeeperData);
+
+    // Headers for Pet Owners table
+    const petOwnerHeaders = ['owner_id', 'username', 'lastname', 'telephone'];
+
+    // Filter data for Pet Owners
+    const petOwnerData = data.filter(item => 'owner_id' in item);
+
+    // Create Pet Owners table
+    createUsersTable('petOwnersTable', petOwnerHeaders, petOwnerData);
+}
+
+function createKeeperHtmlTable(containerId, headers, rows) {
+    const container = document.getElementById(containerId);
+    if (container===undefined) return;
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Append the table to the container
+    container.appendChild(table);
+}
+
+function createKeeperTable(data) {
+    const container = document.getElementById("main-page-users");
+
+    container.innerHTML = "<button type='button' onClick='$(\"#main-page-users\").hide();'>Close!</button><div id='main-petKeepersTable' style='border: 1px solid black'></div>";
+    // Headers for Pet Keepers table
+    const petKeeperHeaders = ['keeper_id', 'username', 'lastname', 'telephone'];
+
+    // Filter data for Pet Keepers
+    const petKeeperData = data.filter(item => 'keeper_id' in item);
+
+    // Create Pet Keepers table
+    createKeeperHtmlTable('main-petKeepersTable', petKeeperHeaders, petKeeperData);
+    $("#main-page-users").show();
+}
+
+function showKeepers() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const parsedObjects = [];
+            var jsonStrings = xhr.responseText.split('}{');
+
+            jsonStrings.forEach(function (jsonString, index) {
+                if (index > 0) {
+                    jsonString = '{' + jsonString;
+                }
+                if (index < jsonStrings.length - 1) {
+                    jsonString = jsonString + '}';
+                }
+                var jsonObject = JSON.parse(jsonString);
+                parsedObjects.push(jsonObject);
+            });
+            createKeeperTable(parsedObjects);
+
+            $('#active-user-data').show();
+            $('#user-fields-container').hide();
+            $("#welcome-message").html("");
+            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('GET', 'AdminUsers');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+/*------------------------AVAILABLE USERS--------------------------*/
+function showAvailableKeepers(){
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            const parsedObjects = [];
+            var jsonStrings = xhr.responseText.split('}{');
+
+            jsonStrings.forEach(function (jsonString, index) {
+                if (index > 0) {
+                    jsonString = '{' + jsonString;
+                }
+                if (index < jsonStrings.length - 1) {
+                    jsonString = jsonString + '}';
+                }
+                var jsonObject = JSON.parse(jsonString);
+                parsedObjects.push(jsonObject);
+            });
+            createAvailableKeeperTable(parsedObjects);
+
+            $('#owner-active-user-data').show();
+            $('#owner-user-fields-container').hide();
+            $("#welcome-message").html("");
+            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('GET', 'OwnerAvailableKeepers');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+function createAvailableKeeperTable(data){
+    const container = document.getElementById("owner-active-user-data");
+    container.innerHTML="<div id='owner-petKeepersTable' style='border: 1px solid black'></div>";
+    // Headers for Pet Keepers table
+    const petKeeperHeaders = ['keeper_id',  'lastname', 'telephone',  'catkeeper',  'catprice',  'dogkeeper',  'dogprice'];
+
+    // Filter data for Pet Keepers
+    const petKeeperData = data.filter(item => 'keeper_id' in item);
+
+    // Create Pet Keepers table
+    createAvailableKeeperHtmlTable('owner-petKeepersTable', petKeeperHeaders, petKeeperData);
+}
+
+function createAvailableKeeperHtmlTable(containerId, headers, rows) {
+    const container = document.getElementById(containerId);
+    if (container===undefined) {console.log("returning");return;}
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    //Delete header
+    const th1 = document.createElement('th');
+    th1.textContent = "Chat";
+    headerRow.appendChild(th1);
+    const th2 = document.createElement('th');
+    th2.textContent = "Book";
+    headerRow.appendChild(th2);
+    const th3 = document.createElement('th');
+    th3.textContent = "Review";
+    headerRow.appendChild(th3);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        const td1 = document.createElement('td');
+        td1.innerHTML="<a href='#' class='userHref' onclick='chatWithKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Chat ";
+        tr.appendChild(td1);
+        const td2 = document.createElement('td');
+        td2.innerHTML="<a href='#' class='userHref' onclick='bookKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Book ";
+        tr.appendChild(td2);
+        const td3 = document.createElement('td');
+        td3.innerHTML="<a href='#' class='userHref' onclick='reviewKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Review ";
+        tr.appendChild(td3);
+
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Append the table to the container
+    container.appendChild(table);
+}
+/*------------------------AVAILABLE USERS--------------------------*/
+function createRevenueChart(data) {
+    const container = document.getElementById("active-user-data");
+    container.innerHTML = "<div id='chart' style=\"width: 900px; height: 500px;\"></div>";
+
+    const parsedObjects = [];
+    // $('#active-user-data').html("Database Users")
+    // $("#active-user-data").append(xhr.responseText);
+    // Split the response text into an array of JSON strings
+    var jsonStrings = data.split('}{');
+
+    // Iterate over each JSON string, parse it, and add to the array
+    jsonStrings.forEach(function (jsonString, index) {
+        // Add back the missing curly brace for all but the first string
+        if (index > 0) {
+            jsonString = '{' + jsonString;
+        }
+
+        // Add back the missing curly brace for all but the last string
+        if (index < jsonStrings.length - 1) {
+            jsonString = jsonString + '}';
+        }
+
+        // Parse the JSON string
+        var jsonObject = JSON.parse(jsonString);
+
+        // Add the parsed object to the array
+        parsedObjects.push(jsonObject);
+    });
+    console.log(parsedObjects)
+    // const chart_data = google.visualization.arrayToDataTable([
+    //     ['Income', 'Keeper\'s', 'Pet Care\'', {role: 'annotation'}],
+    //     // [parseInt(jsonData["keeper_id"]), parseInt(jsonData["keeper_income"]), parseInt(jsonData["pet_care_income"]), ''],
+    // ]);
+    const chart_data = new google.visualization.DataTable();
+    chart_data.addColumn('string', 'Keeper');
+    chart_data.addColumn('number', 'Income');
+    chart_data.addColumn('number', 'Pet Care Profit');
+
+    parsedObjects.forEach(lambdaData => {
+        chart_data.addRow([
+            lambdaData["keeper_id"],
+            lambdaData['keeper_income'],
+            lambdaData['pet_care_income'],
+        ]);
+    });
+    const options = {
+        title: 'Revenue of Pet Care per user',
+        bars: 'horizontal', // Required for Material Bar Charts.
+        legend: { position: 'top', maxLines: 3 },
+    };
+    var chart = new google.visualization.BarChart(document.getElementById('chart'));
+    chart.draw(chart_data, options);
+}
+function createUserCountChart(data) {
+    const container = document.getElementById("active-user-data");
+    container.innerHTML = "<div id='chart' style=\"width: 900px; height: 500px;\"></div>";
+
+    console.log(JSON.parse(data));
+    jsonData = JSON.parse(data);
+
+    const chart_data = google.visualization.arrayToDataTable([
+        ['User Type', 'Count'],
+        ['Pet Keepers',     parseInt(jsonData["keeperCount"])],
+        ['Pet Owners',     parseInt(jsonData["ownerCount"])],
+    ]);
+    const options = {
+        title: 'Users Per Type'
+    };
+    const chart = new google.visualization.PieChart(document.getElementById('chart'));
+    chart.draw(chart_data, options);
+}
+function createPetChart(data) {
+    const container = document.getElementById("active-user-data");
+    container.innerHTML = "<div id='chart' style=\"width: 900px; height: 500px;\"></div>";
+
+    console.log(JSON.parse(data));
+    jsonData = JSON.parse(data);
+
+    const chart_data = google.visualization.arrayToDataTable([
+        ['Pet Type', 'Count'],
+        ['Cats',     parseInt(jsonData["Cats"])],
+        ['Dogs',     parseInt(jsonData["Dogs"])],
+    ]);
+    const options = {
+        title: 'Pet Count per Type'
+    };
+    const chart = new google.visualization.PieChart(document.getElementById('chart'));
+    chart.draw(chart_data, options);
+}
+
 $(document).ready(function () {
+    google.charts.load('current', {'packages':['corechart']});
     $('.debug-container').hide();
     $('#activeSession-topnav').hide();
+    $('#owner-activeSession-topnav').hide();
+    $('#admin-activeSession-topnav').hide();
     isLoggedIn();
     // showLogin();
     // getTheme();

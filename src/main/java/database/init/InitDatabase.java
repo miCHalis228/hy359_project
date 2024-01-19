@@ -7,14 +7,10 @@ package database.init;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
-import database.tables.EditPetsTable;
-import static database.DB_Connection.getInitialConnection;
-import database.tables.EditBookingsTable;
-import database.tables.EditMessagesTable;
+import database.tables.*;
 
-import database.tables.EditPetOwnersTable;
-import database.tables.EditPetKeepersTable;
-import database.tables.EditReviewsTable;
+import static database.DB_Connection.getInitialConnection;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -67,6 +63,9 @@ public class InitDatabase {
         EditPetKeepersTable editkeepers = new EditPetKeepersTable();
         editkeepers.createPetKeepersTable();
 
+        EditAdministratorTable editAdministratorTable = new EditAdministratorTable();
+        editAdministratorTable.createAdministratorTable();
+
         EditPetsTable editpets = new EditPetsTable();
         editpets.createPetsTable();
 
@@ -96,6 +95,11 @@ public class InitDatabase {
         editKeepers.addPetKeeperFromJSON(Resources.petKeeper4);
         editKeepers.addPetKeeperFromJSON(Resources.petKeeper5);
         editKeepers.addPetKeeperFromJSON(Resources.petKeeper6);
+
+        EditAdministratorTable editAdministratorTable = new EditAdministratorTable();
+        editAdministratorTable.addAdministratorFromJSON(Resources.admin1);
+        editAdministratorTable.addAdministratorFromJSON(Resources.admin2);
+        editAdministratorTable.addAdministratorFromJSON(Resources.admin3);
 
         EditPetsTable ebt = new EditPetsTable();
         ebt.addPetFromJSON(Resources.pet1);
@@ -157,25 +161,25 @@ public class InitDatabase {
         System.out.println("Dog Keepers\n" + dogKeepersJSON + "\n");
 
         //all available Keepers
-        ArrayList<PetKeeper> availableKeepers = new ArrayList<PetKeeper>();
-        availableKeepers = editkeepers.getAvailableKeepers("all");
-        Gson gson4 = new Gson();
-        JsonArray availableKeepersJSON = gson4.toJsonTree(availableKeepers).getAsJsonArray();
-        System.out.println("All available Keepers\n" + availableKeepersJSON + "\n");
+//        ArrayList<PetKeeper> availableKeepers = new ArrayList<PetKeeper>();
+//        availableKeepers = editkeepers.getAvailableKeepers("all");
+//        Gson gson4 = new Gson();
+//        JsonArray availableKeepersJSON = gson4.toJsonTree(availableKeepers).getAsJsonArray();
+//        System.out.println("All available Keepers\n" + availableKeepersJSON + "\n");
 
         //all available catKeepers
-        ArrayList<PetKeeper> availableCatKeepers = new ArrayList<PetKeeper>();
-        availableCatKeepers = editkeepers.getAvailableKeepers("catKeepers");
-        Gson gson5 = new Gson();
-        JsonArray availableCatKeepersJSON = gson5.toJsonTree(availableCatKeepers).getAsJsonArray();
-        System.out.println("All available CAT Keepers\n" + availableCatKeepersJSON + "\n");
+//        ArrayList<PetKeeper> availableCatKeepers = new ArrayList<PetKeeper>();
+//        availableCatKeepers = editkeepers.getAvailableKeepers("catKeepers");
+//        Gson gson5 = new Gson();
+//        JsonArray availableCatKeepersJSON = gson5.toJsonTree(availableCatKeepers).getAsJsonArray();
+//        System.out.println("All available CAT Keepers\n" + availableCatKeepersJSON + "\n");
 
         //all available DOG KEEPERS
-        ArrayList<PetKeeper> availableDogKeepers = new ArrayList<PetKeeper>();
-        availableDogKeepers = editkeepers.getAvailableKeepers("dogKeepers");
-        Gson gson6 = new Gson();
-        JsonArray availableDogKeepersJSON = gson6.toJsonTree(availableDogKeepers).getAsJsonArray();
-        System.out.println("All available DOG Keepers\n" + availableDogKeepersJSON + "\n");
+//        ArrayList<PetKeeper> availableDogKeepers = new ArrayList<PetKeeper>();
+//        availableDogKeepers = editkeepers.getAvailableKeepers("dogKeepers");
+//        Gson gson6 = new Gson();
+//        JsonArray availableDogKeepersJSON = gson6.toJsonTree(availableDogKeepers).getAsJsonArray();
+//        System.out.println("All available DOG Keepers\n" + availableDogKeepersJSON + "\n");
 
         // all messages of a booking
         EditMessagesTable editmessages = new EditMessagesTable();

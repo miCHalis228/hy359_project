@@ -274,14 +274,29 @@ function validateLoginForm(){
     return false;
 }
 
+function validateAdminLoginForm(){
+    adminLogin();
+    return false;
+}
+
 function showUser(){
     getLoggedUserData();
     $("#welcome-message").html("");
 }
 
+function showOwner(){
+    getLoggedOwnerData();
+    $("#welcome-message").html("");
+}
 function showUserFields(){
     $('#user-fields-container').show();
     $('#active-user-data').hide();
+    $("#welcome-message").html("");
+}
+
+function showOwnerFields(){
+    $('#owner-user-fields-container').show();
+    $('#owner-active-user-data').hide();
     $("#welcome-message").html("");
 }
 

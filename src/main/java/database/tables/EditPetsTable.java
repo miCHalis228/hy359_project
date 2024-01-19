@@ -200,7 +200,7 @@ public class EditPetsTable {
         ArrayList<Pet> pets = new ArrayList<Pet>();
         ResultSet rs;
         try {
-            rs = stmt.executeQuery("SELECT * FROM pets WHERE type= '" + type + "' AND weight BETWEEN '" + fromWeight + "' AND '" + toWeight + "'");
+            rs = stmt.executeQuery("SELECT * FROM pets WHERE type= '" + type + "' AND weight BETWEEN " + fromWeight + " AND " + toWeight);
 
             while (rs.next()) {
                 String json = DB_Connection.getResultsToJSON(rs);
@@ -214,6 +214,44 @@ public class EditPetsTable {
             System.err.println(e.getMessage());
         }
         return null;
+    }
+
+    public int getCatCount() throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        int count = 0;
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT COUNT(pet_id) as petCount FROM pets WHERE type='cat'");
+
+            if (rs.next()) {
+                count = rs.getInt("petCount");
+            }
+            return count;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return -1;
+    }
+
+    public int getDogCount() throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        int count = 0;
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT COUNT(pet_id) as petCount FROM pets WHERE type='dog'");
+
+            if (rs.next()) {
+                count = rs.getInt("petCount");
+            }
+            return count;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return -1;
     }
 
     public void updatePet(String id, String weight) throws SQLException, ClassNotFoundException {
@@ -234,26 +272,26 @@ public class EditPetsTable {
         con.close();
     }
 
+
+
     public void deletePet(String id) throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();
         ResultSet rs;
         int success;
         try {
-            rs = stmt.executeQuery("SELECT * FROM bookings WHERE pet_id='" + id + "'");
-            if (rs.next()){
-                success = stmt.executeUpdate("DELETE FROM bookings WHERE pet_id='" + id + "'");
-                if (success == 0){
-                    throw new ClassNotFoundException("failed to delete from bookings");
-                }
+            success = stmt.executeUpdate("DELETE FROM messages WHERE booking_id IN" +
+                    "(SELECT booking_id FROM bookings WHERE pet_id='" + id + "')");
+            if (success == 0){
+                System.out.print("failed to delete pet from messages with ID: " + id);
             }
-            rs = stmt.executeQuery("SELECT * FROM pets WHERE pet_id='" + id + "'");
-            if (rs.next()) {
-                System.out.println(3);
-                success = stmt.executeUpdate("DELETE FROM pets WHERE pet_id='"+ id + "'");
-                if (success == 0) {
-                    throw new ClassNotFoundException("failed to delete from pets");
-                }
+            success = stmt.executeUpdate("DELETE FROM bookings WHERE pet_id='" + id + "'");
+            if (success == 0){
+                System.out.print("failed to delete pet from bookings with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM pets WHERE pet_id='" + id + "'");
+            if (success == 0){
+                throw new ClassNotFoundException("failed to delete from pets");
             }
         } catch (Exception e) {
             System.err.println("Got an exception! ");

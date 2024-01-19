@@ -85,29 +85,24 @@ public class EditPetKeepersTable {
         return null;
     }
 
-    public ArrayList<PetKeeper> getAvailableKeepers(String type) throws SQLException, ClassNotFoundException {
+    public ArrayList<String> getAvailableKeepers(String type) throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();
-        ArrayList<PetKeeper> keepers = new ArrayList<PetKeeper>();
+        ArrayList<String> keepers = new ArrayList<String>();
         ResultSet rs = null;
         try {
             //if(type=="catkeeper")
             if ("all".equals(type))
-                rs = stmt.executeQuery("SELECT * FROM `petKeepers` WHERE  `petKeepers`.`keeper_id` not in (select keeper_id "
-                        + "from `bookings` where `status`='requested' or  `status`='accepted')\n" + "");
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE  `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             else if ("catKeepers".equals(type))
-                rs = stmt.executeQuery("SELECT * FROM `petKeepers` WHERE `petKeepers`.`catkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id "
-                        + "from `bookings` where `status`='requested' or  `status`='accepted')");
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE `petKeepers`.`catkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             else if ("dogKeepers".equals(type))
-                rs = stmt.executeQuery("SELECT * FROM `petKeepers` WHERE `petKeepers`.`dogkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id "
-                        + "from `bookings` where `status`='requested' or  `status`='accepted')");
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE `petKeepers`.`dogkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
 
 
             while (rs.next()) {
                 String json = DB_Connection.getResultsToJSON(rs);
-                Gson gson = new Gson();
-                PetKeeper keeper = gson.fromJson(json, PetKeeper.class);
-                keepers.add(keeper);
+                keepers.add(json);
             }
             return keepers;
         } catch (Exception e) {
@@ -123,7 +118,9 @@ public class EditPetKeepersTable {
         ArrayList<PetKeeper> keepers = new ArrayList<PetKeeper>();
         ResultSet rs = null;
         try {
-            if ("catkeeper".equals(type))
+            if("all".equals(type))
+                rs = stmt.executeQuery("SELECT * FROM petkeepers");
+            else if ("catkeeper".equals(type))
                 rs = stmt.executeQuery("SELECT * FROM petkeepers WHERE catkeeper= '" + "true" + "'");
             else if ("dogkeeper".equals(type))
                 rs = stmt.executeQuery("SELECT * FROM petkeepers WHERE dogkeeper= '" + "true" + "'");
@@ -141,6 +138,50 @@ public class EditPetKeepersTable {
             System.err.println(e.getMessage());
         }
         return null;
+    }
+
+    public ArrayList<String> getKeepersAdmin(String type) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ArrayList<String> keepers = new ArrayList<String>();
+        ResultSet rs = null;
+        try {
+            if("all".equals(type))
+                rs = stmt.executeQuery("SELECT keeper_id,username,lastname,telephone FROM petkeepers");
+            else if ("catkeeper".equals(type))
+                rs = stmt.executeQuery("SELECT keeper_id,username,lastname,telephone FROM petkeepers WHERE catkeeper= '" + "true" + "'");
+            else if ("dogkeeper".equals(type))
+                rs = stmt.executeQuery("SELECT keeper_id,username,lastname,telephone FROM petkeepers WHERE dogkeeper= '" + "true" + "'");
+
+
+            while (rs.next()) {
+                String json = DB_Connection.getResultsToJSON(rs);
+                keepers.add(json);
+            }
+            return keepers;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public int getKeepersCountAdmin() throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        int keepers = 0;
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery("SELECT COUNT(keeper_id) as keeperCount FROM petkeepers");
+            if (rs.next()) {
+                keepers = rs.getInt("keeperCount");
+            }
+            return keepers;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return -1;
     }
 
     public String databasePetKeeperToJSON(String username, String password) throws SQLException, ClassNotFoundException {
@@ -262,4 +303,37 @@ public class EditPetKeepersTable {
         }
     }
 
+
+    public void deleteKeeper(String id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        int success;
+        try {
+            success = stmt.executeUpdate(String.format("DELETE FROM messages WHERE booking_id IN(SELECT booking_id FROM bookings WHERE keeper_id=%s)", id));
+            System.out.println(1);
+            if (success == 0){
+                System.out.print("failed to delete keeeper from messages with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM bookings WHERE keeper_id='" + id + "'");
+            System.out.println(2);
+            if (success == 0){
+                System.out.print("failed to delete keeeper from bookings with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM reviews WHERE keeper_id='" + id + "'");
+            System.out.println(3);
+            if (success == 0){
+                System.out.print("failed to delete keeeper from reviews with ID: " + id);
+            }
+            success = stmt.executeUpdate("DELETE FROM petkeepers WHERE keeper_id='" + id + "'");
+            System.out.println(4);
+            if (success == 0){
+                throw new ClassNotFoundException("failed to delete from petkeepers");
+            }
+        } catch (Exception e) {
+            System.err.println("Got an exception! User Delete ");
+            System.err.println(e.getMessage());
+        }
+        stmt.close();
+        con.close();
+    }
 }

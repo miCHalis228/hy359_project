@@ -1,5 +1,5 @@
-<form id="loginForm" name="loginForm" onsubmit='return validateLoginForm();'>
-	<h1>Login Form</h1>
+<form id="admin-loginForm" name="admin-loginForm" onsubmit='return validateAdminLoginForm();'>
+	<h1>Admin Login Form</h1>
 	<div id="error"></div>
 	<label for="username">username:</label><br>
 	<div class="field username">
@@ -25,12 +25,8 @@
 	<input class="button" type="submit" value="Login">
 <!--	<button class="test button" id="showRegistrationFromLogin" onclick="showRegistrationForm()" style="color: red"></button>-->
 	<div id="signup">
-		<p>Not registered yet?</p>
-		<p>Create DB account</p>
-		<button class="test button" type="button" id="showRegistrationFromLogin" onclick="showRegistrationForm()" >Register Now</button>
-	</div>
-	<div id="admin">
-		<p>Admin?</p>
-		<button class="test button" type="button" id="showAdminFromLogin" onclick="showAdminLogin()">Admin Login</button>
+		<p>Not Admin?</p>
+		<p>Go back</p>
+		<button class="test button" type="button" id="showLoginFromLogin" onclick="showLogin()" >Back to Login</button>
 	</div>
 </form>

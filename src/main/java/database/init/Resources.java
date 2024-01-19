@@ -177,10 +177,22 @@ public class Resources {
             + "\"message\":\"Einai mia xara twra koimatai\","
             + "\"sender\":\"keeper\","
             + "\"datetime\":\"2023-08-11 16:10:10\"}";
-       
-       
-         static String review1 = "{\"owner_id\":\"1\","
-            +     "\"keeper_id\":\"1\","
+
+
+        static String review1 = "{\"owner_id\":\"1\","
+           +     "\"keeper_id\":\"1\","
             + "\"reviewText\":\"Ola teleia!!\","
             + "\"reviewScore\":\"5\"}";
+
+        static String admin1 = "{\"admin_id\":\"1\","
+                + "\"username\":\"admin1\","
+                + "\"password\":\"admin1\"}";
+
+        static String admin2 = "{\"admin_id\":\"2\","
+                + "\"username\":\"admin2\","
+                + "\"password\":\"admin2\"}";
+
+        static String admin3 = "{\"admin_id\":\"3\","
+                + "\"username\":\"admin3\","
+                + "\"password\":\"admin3\"}";
 }

@@ -12,6 +12,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -57,7 +60,24 @@ public class EditBookingsTable {
         String json = gson.toJson(r, Booking.class);
         return json;
     }
-
+    public Map<String,Integer> getRevenue() throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        Map<String, Integer> revenue = new HashMap<>();
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery("SELECT SUM(price) as sum, keeper_id FROM Bookings GROUP BY keeper_id");
+            while (rs.next()) {
+                String json = DB_Connection.getResultsToJSON(rs);
+                revenue.put(rs.getString("keeper_id"), rs.getInt("sum"));
+            }
+            return revenue;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
     public void updateBooking(int bookingID,  String status) throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();

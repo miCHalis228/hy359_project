@@ -1,6 +1,7 @@
 package servlets;
 
 import database.DB_Connection;
+import database.tables.EditAdministratorTable;
 import database.tables.EditPetKeepersTable;
 import database.tables.EditPetOwnersTable;
 import jakarta.servlet.*;
@@ -32,16 +33,21 @@ public class Login extends HttpServlet {
                 EditPetOwnersTable epot = new EditPetOwnersTable();
                 String petOwnerJson = epot.databasePetOwnerUsernameToJSON(username);
                 if (petOwnerJson != null){
-//                    response.getWriter().write(username);
-                    out.println(petOwnerJson);
+                    out.write(petOwnerJson);
                 } else {
                     EditPetKeepersTable epkt = new EditPetKeepersTable();
                     String petKeeperJson = epkt.databasePetKeeperUsernameToJSON(username);
                     if(petKeeperJson != null){
-//                        response.getWriter().write(username);
-                        out.println(petKeeperJson);
+                        out.write(petKeeperJson);
                     } else {
-                        response.setStatus(403);
+                        EditAdministratorTable editAdministratorTable = new EditAdministratorTable();
+                        String adminJson = editAdministratorTable.databaseAdministratorToJSON(username);
+                        if (adminJson != null){
+                            out.write(adminJson);
+                        } else {
+                            out.write("nothing");
+                            response.setStatus(403);
+                        }
                     }
                 }
             } catch (SQLException e) {
@@ -49,9 +55,6 @@ public class Login extends HttpServlet {
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
-            //getUser
-//            Person p=Resources.registeredUsers.get(session.getAttribute("loggedIn").toString());
-//            response.getWriter().write(p.getUsername());
         }
         else{
             response.setStatus(201);

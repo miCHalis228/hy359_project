@@ -64,7 +64,7 @@ public class PetRESTAPI {
 
         });
 
-        get(apiPath + "/:type/:breed/WithWeight/", (request, response) -> {
+        get(apiPath + "/:type/:breed/WithWeight", (request, response) -> {
             EditPetsTable ept = new EditPetsTable();
             ArrayList<mainClasses.Pet> pets = new ArrayList<mainClasses.Pet>();
             response.status(200);
@@ -73,6 +73,7 @@ public class PetRESTAPI {
             String type = request.params(":type");
             String fromWeight = (request.queryParams("fromWeight"));
             String toWeight = (request.queryParams("toWeight"));
+            System.out.println("in pet with weight");
             try {
                 if (Objects.equals(breed, "all")){
                     pets = ept.databaseToPetsWeight(type,Float.valueOf(fromWeight),Float.valueOf(toWeight));
@@ -180,7 +181,6 @@ public class PetRESTAPI {
             try {
                 if (ept.checkPetExists(pet_id)){
                     ept.deletePet(pet_id);
-//                    ept.addPetFromJSON(request.body());
                     return new Gson().toJson(new StandardResponse(new Gson().toJsonTree(request.body())));
                 } else {
                     response.status(403);
