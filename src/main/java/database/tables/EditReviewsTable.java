@@ -96,7 +96,7 @@ public class EditReviewsTable {
 
             if (hasExistingReview(rev.getKeeper_id(), rev.getOwner_id())) {
                 System.out.println("A review from this owner to this keeper already exists.");
-                return;
+                throw new ClassNotFoundException("A review from this owner to this keeper already exists.");
             }
 
             Statement stmt = con.createStatement();

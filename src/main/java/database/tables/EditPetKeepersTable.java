@@ -6,6 +6,8 @@
 package database.tables;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import mainClasses.PetKeeper;
 import database.DB_Connection;
 
@@ -92,12 +94,18 @@ public class EditPetKeepersTable {
         ResultSet rs = null;
         try {
             //if(type=="catkeeper")
-            if ("all".equals(type))
+            if ("all".equals(type)){
+                System.out.println("in all");
                 rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE  `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
-            else if ("catKeepers".equals(type))
-                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE `petKeepers`.`catkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
-            else if ("dogKeepers".equals(type))
-                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE `petKeepers`.`dogkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
+            }
+            else if ("catKeepers".equals(type)){
+                System.out.println("in cats");
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catprice FROM `petKeepers` WHERE `petKeepers`.`catkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
+            }
+            else if ("dogKeepers".equals(type)){
+                System.out.println("in dogs");
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,dogprice FROM `petKeepers` WHERE `petKeepers`.`dogkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
+            }
 
 
             while (rs.next()) {
@@ -105,6 +113,63 @@ public class EditPetKeepersTable {
                 keepers.add(json);
             }
             return keepers;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public ArrayList<String> getAvailableKeepersForOwnerWithPrices(String type, int duration) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ArrayList<String> keepers = new ArrayList<>(), all_keepers;
+        ResultSet rs = null;
+        try {
+            Gson gson = new Gson();
+            switch (type){
+                case "cat":
+                    all_keepers = getAvailableKeepers("catKeepers");
+                    for (String keeper: all_keepers){
+                        System.out.println("available cat keeper = " + keeper);
+                        JsonObject jsonObject = JsonParser.parseString(keeper).getAsJsonObject();
+
+                        int price = jsonObject.remove("catprice").getAsInt();
+                        price = price * duration;
+
+                        jsonObject.addProperty("price",price);
+
+                        String updatedJsonString = gson.toJson(jsonObject);
+
+                        // Add the updated JSON string to the new list
+                        keepers.add(updatedJsonString);
+                        System.out.println(updatedJsonString);
+                    }
+                    System.out.println("cat" + keepers.size());
+                    return keepers;
+                case "dog":
+                    all_keepers = getAvailableKeepers("dogKeepers");
+                    for (String keeper: all_keepers){
+                        System.out.println("available dog keeper = " + keeper);
+                        JsonObject jsonObject = JsonParser.parseString(keeper).getAsJsonObject();
+
+                        int price = jsonObject.remove("dogprice").getAsInt();
+                        price = price * duration;
+
+                        jsonObject.addProperty("price",price);
+
+                        String updatedJsonString = gson.toJson(jsonObject);
+
+                        // Add the updated JSON string to the new list
+                        keepers.add(updatedJsonString);
+                        System.out.println(updatedJsonString);
+                    }
+                    System.out.println("dog" + keepers.size());
+                    return keepers;
+                default:
+                    System.out.println("default " + type);
+                    return null;
+            }
         } catch (Exception e) {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());

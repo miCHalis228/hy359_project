@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.*;
 import mainClasses.JSON_Converter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.SQLException;
 
 @WebServlet(name = "ReviewBookingServlet", value = "/ReviewBookingServlet")
@@ -28,10 +29,13 @@ public class ReviewBookingServlet extends HttpServlet {
         System.out.println(jsonString);
 
         EditReviewsTable editReviewsTable = new EditReviewsTable();
+        PrintWriter out = response.getWriter();
         try {
             editReviewsTable.addReviewFromJSON(jsonString);
+            out.write("Succesful Review! Thank you!");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            out.write(e.getMessage());
+            response.setStatus(500);
         }
 
         response.setContentType("text/html;charset=UTF-8");

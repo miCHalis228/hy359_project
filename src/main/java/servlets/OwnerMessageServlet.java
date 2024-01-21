@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.*;
 import mainClasses.JSON_Converter;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -35,11 +36,13 @@ public class OwnerMessageServlet extends HttpServlet {
         String jsonString = bookingJson.toString();
         System.out.println(jsonString);
 
+        PrintWriter out = response.getWriter();
         EditMessagesTable editMessagesTable = new EditMessagesTable();
         try {
             editMessagesTable.addMessageFromJSON(jsonString);
+            out.write("Message Sent!");
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            out.write(e.getMessage());
         }
 
         response.setContentType("text/html;charset=UTF-8");

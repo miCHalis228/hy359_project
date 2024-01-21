@@ -309,6 +309,15 @@ function showMain() {
     $('#error-checking').empty();
 }
 
+
+function showBookings(){
+    $('#owner-active-user-data').show();
+    $("#welcome-message").hide();
+    const container = document.getElementById("owner-active-user-data");
+    container.innerHTML="<button type='button' onclick='showMyBookings()'>My Bookings</button>" +
+        "<button type='button' onclick='showNewBookingForm()'>Create Booking</button>" +
+        "<div id='booking-data'></div>";
+}
 function toggleDebug(){
     $('.debug-container').toggle();
 }

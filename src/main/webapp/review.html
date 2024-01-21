@@ -1,0 +1,38 @@
+<form id="review-form" target="_blank">
+
+	<h1 id="reviewHeader">Leave Review</h1>
+	<label for="owner_id">Owner ID</label><br>
+	<div class="field owner_id">
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-id-card"></i>
+			<input id="owner_id"
+				   name="owner_id" disabled required>
+		</div>
+	</div>
+	<label for="keeper_id">Keeper ID</label><br>
+	<div class="field keeper_id">
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-id-card"></i>
+			<input id="keeper_id"
+				   name="keeper_id" disabled required>
+		</div>
+	</div>
+
+	<label for="reviewText">Review</label><br>
+	<div class="field reviewText">
+		<div class="input-area">
+			<textarea id="reviewText" name="reviewText" required></textarea>
+		</div>
+	</div>
+
+	<label for="reviewScore">Final Score</label><br>
+	<div class="field reviewScore">
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-phone"></i>
+			<input id="reviewScore" name="reviewScore"
+				   type="number" required>
+			<br><br>
+		</div>
+	</div>
+	<button type="button" onclick="reviewBooking()">Make Review</button>
+</form>

@@ -47,6 +47,45 @@ public class EditBookingsTable {
         return null;
     }
 
+    public ArrayList<String> databaseToBookingKeeper(int id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ArrayList<String> bookings = new ArrayList<>();
+
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT * FROM bookings WHERE keeper_id= '" + id + "'");
+            while(rs.next()){
+                String json = DB_Connection.getResultsToJSON(rs);
+                bookings.add(json);
+            }
+            return bookings;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+    public ArrayList<String> databaseToBookingOwner(int id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ArrayList<String> bookings = new ArrayList<>();
+
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT * FROM bookings WHERE owner_id= '" + id + "'");
+            while(rs.next()){
+                String json = DB_Connection.getResultsToJSON(rs);
+                bookings.add(json);
+            }
+            return bookings;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
     public Booking jsonToBooking(String json) {
         Gson gson = new Gson();
         Booking r = gson.fromJson(json, Booking.class);
@@ -120,7 +159,7 @@ public class EditBookingsTable {
 
             if (hasExistingRequestedBooking(con, bor.getOwner_id())) {
                 System.out.println("A booking with status 'requested' already exists for this owner.");
-                return;
+                throw new ClassNotFoundException("A booking with status 'requested' already exists for this owner.");
             }
 
             Statement stmt = con.createStatement();

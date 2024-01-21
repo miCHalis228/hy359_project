@@ -1,0 +1,32 @@
+<form id="booking-form" target="_blank">
+
+	<h1 id="bookingHeader">Create Booking</h1>
+	<div class="field fromDate">
+		<label for="fromDate">From Date</label><br>
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-calendar">*</i>
+			<input id="fromDate" name="fromDate" required type="date">
+		</div>
+	</div>
+
+	<div class="field toDate">
+		<label for="toDate">To Date</label><br>
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-calendar">*</i>
+			<input id="toDate" name="toDate" required type="date">
+		</div>
+	</div>
+
+	<button type="button" onclick="getAvailableKeepersPrices()">See Availability</button>
+
+</form>
+<div id="keeper-prices-container">
+	<button type="button" onclick="goBackToBookingForm()">Go back to Form</button>
+	<div id="keeper-prices"></div>
+</div>
+<script>
+	const currentDate = new Date().toISOString().split('T')[0];
+	document.getElementById('fromDate').min = currentDate;
+	document.getElementById('toDate').min = currentDate;
+</script>
+<div id="error"></div>

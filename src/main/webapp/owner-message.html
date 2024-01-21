@@ -1,0 +1,21 @@
+<form id="message-form" target="_blank">
+
+	<h1 id="messageHeader">Leave a Message:</h1>
+	<label for="booking_id">Booking ID</label><br>
+	<div class="field booking_id">
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-id-card"></i>
+			<input id="booking_id"
+				   name="booking_id" disabled required>
+		</div>
+	</div>
+
+	<label for="message">Message</label><br>
+	<div class="field message">
+		<div class="input-area">
+			<textarea id="message" name="message" required></textarea>
+		</div>
+	</div>
+
+	<button type="button" onclick="leaveMessageOwner()">Send Message!</button>
+</form>

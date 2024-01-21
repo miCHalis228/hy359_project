@@ -966,6 +966,54 @@ function createAvailableKeeperHtmlTable(containerId, headers, rows) {
     // Append the table to the container
     container.appendChild(table);
 }
+
+function createKeeperPricesTable(data){
+    const petKeeperHeaders = ['keeper_id',  'lastname', 'telephone', 'price'];
+    createKeeperPriceHtmlTable('keeper-prices', petKeeperHeaders, data);
+}
+function createKeeperPriceHtmlTable(containerId, headers, rows) {
+    const container = document.getElementById(containerId);
+    if (container===undefined) {console.log("returning");return;}
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    //Delete header
+    const th1 = document.createElement('th');
+    th1.textContent = "Book";
+    headerRow.appendChild(th1);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        const td1 = document.createElement('td');
+        td1.innerHTML="<a href='#' class='userHref' onclick='addBooking(" + globalUserJson.owner_id + " ," + row[headers[0]] + "," + row[headers[3]] + ")'>Book ";
+        tr.appendChild(td1);
+
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Append the table to the container
+    container.appendChild(table);
+}
+
 /*------------------------AVAILABLE USERS--------------------------*/
 function createRevenueChart(data) {
     const container = document.getElementById("active-user-data");
@@ -1068,21 +1116,296 @@ $(document).ready(function () {
     // getTheme();
 });
 
+function createMyBookingsTable(data){
+    const container = document.getElementById("owner-active-user-data");
+    container.innerHTML="<h2>Requested</h2><div id='requested'></div>" +
+        "<h2>Finished</h2><div id='finished'></div>" +
+        "<h2>Accepted</h2><div id='accepted'></div>";
+    // Headers for Pet Keepers table
+    const bookingsHeader = ['booking_id','owner_id', 'pet_id', 'keeper_id', 'fromdate', 'todate', 'status', 'price'];
+
+    // Filter data for Pet Keepers
+    const requested = data.filter(item => item.status === "requested");
+
+    // Create Pet Keepers table
+    createRequestedTable('requested', bookingsHeader, requested);
+
+    const finished = data.filter(item => item.status === "finished");
+    createCompletedTable('finished', bookingsHeader, finished);
+
+    const accepted = data.filter(item => item.status === "accepted");
+    createAcceptedTable('accepted', bookingsHeader, accepted);
+}
+
+function createRequestedTable(containerId, headers, rows) {
+    const container = document.getElementById(containerId);
+    if (container===undefined) {console.log("returning");return;}
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Append the table to the container
+    container.appendChild(table);
+}
+
+function showReviewPage(owner_id, keeper_id){
+    $('#owner-active-user-data').load("review.html", function (){
+        $('input[name="owner_id"]').val(owner_id);
+        $('input[name="keeper_id"]').val(keeper_id);
+    });
+}
+
+function showMessagePage(booking_id){
+    $('#owner-active-user-data').load("message.html", function (){
+        $('input[name="booking_id"]').val(booking_id);
+    });
+}
+
+function createCompletedTable(containerId, headers, rows) {
+    const container = document.getElementById(containerId);
+    if (container===undefined) {console.log("returning");return;}
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    //Delete header
+    const th = document.createElement('th');
+    th.textContent = "Review Keeper";
+    headerRow.appendChild(th);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        const td = document.createElement('td');
+        td.innerHTML="<a href='#' class='userHref' onclick='showReviewPage(" + row[headers[1]] + " ," + row[headers[3]] + ")'>Review Keeper</a>";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Append the table to the container
+    container.appendChild(table);
+}
+
+function createAcceptedTable(containerId, headers, rows) {
+    const container = document.getElementById(containerId);
+    if (container===undefined) {console.log("returning");return;}
+    // Create table element
+    const table = document.createElement('table');
+
+    // Create table header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(header => {
+        const th = document.createElement('th');
+        th.textContent = header;
+        headerRow.appendChild(th);
+    });
+    //Delete header
+    const th = document.createElement('th');
+    th.textContent = "Message Keeper";
+    headerRow.appendChild(th);
+
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+    rows.forEach(row => {
+        const tr = document.createElement('tr');
+        headers.forEach(header => {
+            const td = document.createElement('td');
+            td.textContent = row[header] || '';
+            tr.appendChild(td);
+        });
+        const td = document.createElement('td');
+        td.innerHTML="<a href='#' class='userHref' onclick='showMessagePage(" + row[headers[0]] + ")'>Message_Keeper</a>";
+        tr.appendChild(td);
+        const td2 = document.createElement('td');
+        td2.innerHTML="<a href='#' class='userHref' onclick='endBooking(" + row[headers[0]] + ")'>Finish_Booking</a>";
+        tr.appendChild(td2);
+        tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+
+    // Append the table to the container
+    container.appendChild(table);
+}
+
+function showMyBookings(){
+    var xhr = new XMLHttpRequest();
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            // $('#booking-data').html(xhr.responseText);
+            const parsedObjects = [];
+            var jsonStrings = xhr.responseText.split('}{');
+
+            jsonStrings.forEach(function (jsonString, index) {
+                if (index > 0) {
+                    jsonString = '{' + jsonString;
+                }
+                if (index < jsonStrings.length - 1) {
+                    jsonString = jsonString + '}';
+                }
+                var jsonObject = JSON.parse(jsonString);
+                parsedObjects.push(jsonObject);
+            });
+            createMyBookingsTable(parsedObjects);
+            $('#ajaxContent').html("Successful Booking.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            // console.log(xhr.responseText);
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('GET', 'BookingServlet?owner_id=' + globalUserJson.owner_id);
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+function createBookingTable(data){
+    const container = document.getElementById("booking-data");
+    container.innerHTML="my bookings";
+
+    const bookingHeaders = ['booking_id',  'owner_id', 'keeper_id',  'fromDate',  'toDate',  'status',  'price'];
+
+    const bookings = data.filter(item => item.status === "requested" || item.status ==="completed");
+
+    createAvailableKeeperHtmlTable('bookingsTable', bookingHeaders, bookings);
+
+    const activeBooking = data.filter(item => item.status === "accepted");
+
+    createAvailableKeeperHtmlTable('activeBookingsTable', bookingHeaders, activeBooking);
+}
+
+function showNewBookingForm(){
+    const container = document.getElementById("booking-data");
+    $('#booking-data').load("create-booking.html",function (){
+        $('#booking-form').show();
+        $('#keeper-prices-container').hide();
+        $('#keeper-prices').html("");
+    });
+    container.innerHTML="create booking";
+}
+
+function getAvailableKeepersPrices(){
+    var xhr = new XMLHttpRequest();
+    const fromDateString = document.getElementById('fromDate').value;
+    const toDateString = document.getElementById('toDate').value;
+
+    if (fromDateString === undefined || fromDateString.length === 0
+        || toDateString === undefined || toDateString.length === 0){
+        alert('please select dates');
+        return;
+    }
+    const fromDate =new Date(fromDateString);
+    const toDate =new Date(toDateString);
+    if (fromDate > toDate){
+        alert('Choose later toDate');
+        return;
+    }
+    const timeDifference = toDate - fromDate;
+    const daysDifference = Math.floor(timeDifference / (24 * 60 * 60 * 1000));
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log(xhr.responseText);
+            const parsedObjects = [];
+            var jsonStrings = xhr.responseText.split('}{');
+
+            jsonStrings.forEach(function (jsonString, index) {
+                if (index > 0) {
+                    jsonString = '{' + jsonString;
+                }
+                if (index < jsonStrings.length - 1) {
+                    jsonString = jsonString + '}';
+                }
+                var jsonObject = JSON.parse(jsonString);
+                parsedObjects.push(jsonObject);
+            });
+            createKeeperPricesTable(parsedObjects);
+            $('#booking-form').hide();
+            $('#keeper-prices-container').show();
+
+            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+            $('#ajaxContent').append(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    const params = new URLSearchParams();
+    params.append('owner_id',globalUserJson.owner_id);
+    params.append('duration',daysDifference);
+    const paramsString = params.toString();
+    xhr.open('GET', 'OwnerAvailableKeepersWithPrices?' + paramsString);
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send();
+}
+
+function goBackToBookingForm(){
+    $('#booking-form').show();
+    $('#keeper-prices-container').hide();
+    $('#keeper-prices').html("");
+}
+
 /*----------------------- Owner makes booking ------------------------------*/
-function addBooking(){
+function addBooking(owner_id,keeper_id,price){
     var xhr = new XMLHttpRequest();
     var bookingData = {
-        owner_id: '3',
-        pet_id: '1234554321',
-        keeper_id: "3",
-        fromDate: '2024-01-20',
-        toDate: '2024-01-25',
-        price: '30'
+        owner_id: owner_id,
+        keeper_id: keeper_id,
+        fromDate: document.getElementById('fromDate').value,
+        toDate:  document.getElementById('toDate').value,
+        price: price
     };
     var jsonString = JSON.stringify(bookingData);
 
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#owner-active-user-data').html(xhr.responseText);
             $('#ajaxContent').html("Successful Booking.").removeClass('error');
             $('#ajaxContent').append(xhr.responseText);
         } else if (xhr.status !== 200) {
@@ -1097,15 +1420,16 @@ function addBooking(){
 }
 
 /*----------------------- Owner Ends booking ------------------------------*/
-function endBooking(){
+function endBooking(booking_id){
     var xhr = new XMLHttpRequest();
     var bookingData = {
-        owner_id: '2'
+        booking_id: booking_id
     };
     var jsonString = JSON.stringify(bookingData);
 
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#owner-active-user-data').html(xhr.responseText);
             $('#ajaxContent').html("Booking finished succesfully.").removeClass('error');
         } else if (xhr.status !== 200) {
             $('#ajaxContent').html('Request failed. Returned status of ' + xhr.status + "<br>");
@@ -1120,16 +1444,24 @@ function endBooking(){
 /*----------------------- Owner Reviews booking ------------------------------*/
 function reviewBooking(){
     var xhr = new XMLHttpRequest();
+    const reviewText = document.getElementById('reviewText').value;
+    const reviewScore = document.getElementById('reviewScore').value;
+    if (reviewText === undefined || reviewText.length === 0
+        || reviewScore === undefined || reviewScore.length === 0){
+        alert('please fill out the fields');
+        return;
+    }
     var bookingData = {
-        owner_id: '2',
-        keeper_id: "3",
-        reviewText: "Slay!",
-        reviewScore: '10'
+        owner_id: document.getElementById('owner_id').value,
+        keeper_id: document.getElementById('keeper_id').value,
+        reviewText: reviewText,
+        reviewScore: reviewScore
     };
     var jsonString = JSON.stringify(bookingData);
-
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log(xhr.responseText);
+            $('#owner-active-user-data').html(xhr.responseText);
             $('#ajaxContent').html("Booking finished succesfully.").removeClass('error');
         } else if (xhr.status !== 200) {
             $('#ajaxContent').html('Request failed. Returned status of ' + xhr.status + "<br>");
@@ -1145,13 +1477,14 @@ function reviewBooking(){
 function leaveMessageOwner() {
     var xhr = new XMLHttpRequest();
     var bookingData = {
-        booking_id: '2',
-        message: "test message"
+        booking_id:  document.getElementById('booking_id').value,
+        message:  document.getElementById('message').value
     };
     var jsonString = JSON.stringify(bookingData);
 
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#owner-active-user-data').html(xhr.responseText);
             $('#ajaxContent').html("Message send successfully.").removeClass('error');
         } else if (xhr.status !== 200) {
             $('#ajaxContent').html('Request failed. Returned status of ' + xhr.status + "<br>");
@@ -1159,6 +1492,28 @@ function leaveMessageOwner() {
     };
 
     xhr.open('POST', 'OwnerMessageServlet');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send(jsonString);
+}
+/*----------------------- Owner leaves message to keeper ------------------------------*/
+function leaveMessageKeeper() {
+    var xhr = new XMLHttpRequest();
+    var bookingData = {
+        booking_id:  document.getElementById('booking_id').value,
+        message:  document.getElementById('message').value
+    };
+    var jsonString = JSON.stringify(bookingData);
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            $('#owner-active-user-data').html(xhr.responseText);
+            $('#ajaxContent').html("Message send successfully.").removeClass('error');
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').html('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('POST', 'KeeperMessageServlet');
     xhr.setRequestHeader('Content-type', 'application/JSON');
     xhr.send(jsonString);
 }

@@ -235,8 +235,26 @@ public class EditPetOwnersTable {
         stmt.execute(query);
         stmt.close();
     }
-    
-    
+
+
+    public String findOwnersPetType(String owner_id) throws SQLException, ClassNotFoundException{
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT type FROM pets WHERE owner_id= "+owner_id);
+            if (rs.next()){
+                return rs.getString("type");
+            }
+            return null;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
     /**
      * Establish a database connection and add in the database.
      *
