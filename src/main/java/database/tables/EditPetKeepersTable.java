@@ -95,18 +95,14 @@ public class EditPetKeepersTable {
         try {
             //if(type=="catkeeper")
             if ("all".equals(type)){
-                System.out.println("in all");
                 rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE  `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             }
             else if ("catKeepers".equals(type)){
-                System.out.println("in cats");
                 rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catprice FROM `petKeepers` WHERE `petKeepers`.`catkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             }
             else if ("dogKeepers".equals(type)){
-                System.out.println("in dogs");
                 rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,dogprice FROM `petKeepers` WHERE `petKeepers`.`dogkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             }
-
 
             while (rs.next()) {
                 String json = DB_Connection.getResultsToJSON(rs);
@@ -262,6 +258,29 @@ public class EditPetKeepersTable {
             }
         } catch (Exception e) {
             System.err.println("Got an exception! " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    public JsonObject getKeepersBookingStats(String keeper_id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        JsonObject json = new JsonObject();
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery(String.format("SELECT keeper_id, COUNT(*) AS numberOfBookings,SUM(DATEDIFF(toDate, fromDate)) as duration FROM bookings WHERE status = 'finished' AND keeper_id = '%s' GROUP BY keeper_id;", keeper_id));
+            if (rs.next()) {
+                json.addProperty("keeper_id", Integer.parseInt(keeper_id));
+                json.addProperty("numberOfBookings", rs.getInt("numberOfBookings"));
+                json.addProperty("duration", rs.getInt("duration"));
+                System.out.println(json);
+                return json;
+            }
+            return null;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
         }
         return null;
     }

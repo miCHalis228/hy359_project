@@ -66,6 +66,24 @@ public class EditReviewsTable {
         return null;
     }
 
+    public ArrayList<String> databaseToKeeperReviewsStrings(String keeper_id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ArrayList<String> revs=new ArrayList<String>();
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT * FROM reviews where keeper_id='"+keeper_id+"'");
+            while (rs.next()) {
+                String json = DB_Connection.getResultsToJSON(rs);
+                revs.add(json);
+            }
+            return revs;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
 
     public void createReviewTable() throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();

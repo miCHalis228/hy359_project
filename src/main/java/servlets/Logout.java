@@ -30,8 +30,7 @@ public class Logout extends HttpServlet {
             int activeUsers=(int) request.getServletContext().getAttribute("activeUsers");
             request.getServletContext().setAttribute("activeUsers",activeUsers-1);
             response.setStatus(200);
-        }
-        else{
+        } else{
             response.setStatus(403);
         }
     }

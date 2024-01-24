@@ -35,7 +35,9 @@
             <div id="activeSession-topnav">
                 <a id="active-user-topnav" onclick="showUser()">Profile</a>
                 <a onclick="showUserFields()">Update Profile</a>
-<%--                <a onclick="showPetForm()">Pets</a>--%>
+                <a onclick="showKeeperBookings()">Bookings</a>
+                <a onclick="showKeeperStats()">Stats</a>
+                <a onclick="showKeeperNumberOfBookings()">Number Of Bookings</a>
                 <a class="active debug" onclick="logout()">Logout</a>
             </div>
             <div id="owner-activeSession-topnav">

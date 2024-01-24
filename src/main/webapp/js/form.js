@@ -312,7 +312,7 @@ function showMain() {
 
 function showBookings(){
     $('#owner-active-user-data').show();
-    $("#welcome-message").hide();
+    $("#welcome-message").html('');
     const container = document.getElementById("owner-active-user-data");
     container.innerHTML="<button type='button' onclick='showMyBookings()'>My Bookings</button>" +
         "<button type='button' onclick='showNewBookingForm()'>Create Booking</button>" +

@@ -63,8 +63,8 @@ public class EditBookingsTable {
         } catch (Exception e) {
             System.err.println("Got an exception! ");
             System.err.println(e.getMessage());
+            throw new SQLException("keeper not found");
         }
-        return null;
     }
     public ArrayList<String> databaseToBookingOwner(int id) throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
@@ -116,6 +116,26 @@ public class EditBookingsTable {
         }
         return null;
     }
+
+    public int getNumberOfBookingsForKeeper(String keeper_id, String status) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet rs = null;
+        try {
+            String query =String.format("SELECT COUNT(*) as total_rows FROM Bookings WHERE keeper_id='%s' AND status='%s'", keeper_id,status) ;
+            System.out.println(query);
+            rs = stmt.executeQuery(query);
+            if (rs.next()) {
+                return rs.getInt("total_rows");
+            }
+            return 0;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return -1;
+    }
+
     public void updateBooking(int bookingID,  String status) throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();
