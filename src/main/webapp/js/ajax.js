@@ -1955,3 +1955,21 @@ function createKeeperReviewTable(data){
     // Append the table to the container
     container.appendChild(table);
 }
+
+function askChat() {
+    var xhr = new XMLHttpRequest();
+    const question = "hello, how are you? Can you tell me what's a Fibonacci Number?";
+
+    xhr.onload = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            console.log(xhr.responseText);
+            $('#chat-response').html(xhr.responseText);
+        } else if (xhr.status !== 200) {
+            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+        }
+    };
+
+    xhr.open('POST', 'ChatGPTServlet');
+    xhr.setRequestHeader('Content-type', 'application/JSON');
+    xhr.send(question);
+}
