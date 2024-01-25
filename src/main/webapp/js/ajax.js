@@ -1701,6 +1701,9 @@ function createKeeperAcceptedTable(containerId, headers, rows) {
     const th = document.createElement('th');
     th.textContent = "Message_Owner";
     headerRow.appendChild(th);
+    const th1 = document.createElement('th');
+    th1.textContent = "Ask_ChatGPT";
+    headerRow.appendChild(th1);
 
     thead.appendChild(headerRow);
     table.appendChild(thead);
@@ -1717,6 +1720,9 @@ function createKeeperAcceptedTable(containerId, headers, rows) {
         const td = document.createElement('td');
         td.innerHTML="<a href='#' class='userHref' onclick='showKeeperMessagePage(" + row[headers[0]] + ")'>Message Owner</a>";
         tr.appendChild(td);
+        const td1 = document.createElement('td');
+        td1.innerHTML="<a href='#' class='userHref' onclick='showKeeperChatMessage(" + row[headers[2]] + ")'>Ask ChatGPT</a>";
+        tr.appendChild(td1);
         tbody.appendChild(tr);
     });
     table.appendChild(tbody);
@@ -1858,10 +1864,11 @@ function showKeeperBookingStats() {
 }
 
 function createKeeperBookingsStatusChart(data) {
+    jsonData = JSON.parse(data);
     const chart_data = new google.visualization.arrayToDataTable([
         ['Booking Status', 'Count'],
-        ['Accepted',     parseInt(data["accepted"])],
-        ['Rejected',     parseInt(data["rejected"])],
+        ['Accepted',     parseInt(jsonData["accepted"])],
+        ['Rejected',     parseInt(jsonData["rejected"])],
     ]);
     const options = {
         title: 'Accepted/Rejected Chart'
@@ -1956,14 +1963,43 @@ function createKeeperReviewTable(data){
     container.appendChild(table);
 }
 
-function askChat() {
+function showKeeperChatMessage(pet_id){
+    $('#active-user-data').load("keeper-chat-message.html", function (){
+        $('input[name="pet_id"]').val(pet_id);
+        $('#ring').hide();
+    });
+}
+
+
+function askChat(action) {
+    if(action === undefined || action==="")
+        return;
     var xhr = new XMLHttpRequest();
-    const question = "hello, how are you? Can you tell me what's a Fibonacci Number?";
+    const messageData = {
+        pet_id:  document.getElementById('pet_id').value,
+        action:  action,
+        message:  document.getElementById('message').value
+    };
+    console.log(messageData);
+    const jsonString = JSON.stringify(messageData);
+    console.log(jsonString);
+    // const question = "hello, how are you? Can you tell me what's a Fibonacci Number?";
+    disableChatForm();
 
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             console.log(xhr.responseText);
-            $('#chat-response').html(xhr.responseText);
+            let stringWithDoubleBackslashes = xhr.responseText.replace(/\\/g, '\\\\');
+
+            const data = JSON.parse(stringWithDoubleBackslashes);
+            console.log(data);
+            enableChatForm();
+            document.getElementById('message').value = data.message;
+            document.getElementById('response').value = data.response;
+            resizeResponse();
+
+
+            // $('#chat-response').html(xhr.responseText);
         } else if (xhr.status !== 200) {
             $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
         }
@@ -1971,5 +2007,27 @@ function askChat() {
 
     xhr.open('POST', 'ChatGPTServlet');
     xhr.setRequestHeader('Content-type', 'application/JSON');
-    xhr.send(question);
+    xhr.send(jsonString);
+}
+
+function resizeResponse(){
+    // Get the textarea element
+    const textarea = document.getElementById('response');
+
+    // Auto-adjust the height based on content
+    textarea.style.height = 'auto';
+    // textarea.style.width = 'auto';
+    textarea.style.height = (textarea.scrollHeight) + 'px';
+}
+
+function disableChatForm(){
+    document.getElementById('message').disabled = true;
+    $('#ring').show();
+    $(':button').prop('disabled', true);
+}
+
+function enableChatForm(){
+    document.getElementById('message').disabled = false;
+    $('#ring').hide();
+    $(':button').prop('disabled', false);
 }

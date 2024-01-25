@@ -32,6 +32,7 @@
                 <a onclick="showLogin()">Login</a>
                 <a onclick="showKeepers()">Keepers</a>
             </div>
+
             <div id="activeSession-topnav">
                 <a id="active-user-topnav" onclick="showUser()">Profile</a>
                 <a onclick="showUserFields()">Update Profile</a>
@@ -40,6 +41,7 @@
                 <a onclick="showKeeperNumberOfBookings()">Number Of Bookings</a>
                 <a class="active debug" onclick="logout()">Logout</a>
             </div>
+
             <div id="owner-activeSession-topnav">
                 <a id="owner-active-user-topnav" onclick="showOwner()">Profile</a>
                 <a onclick="showOwnerFields()">Update Profile</a>
@@ -55,6 +57,7 @@
                 <a onclick="showPetForm()">Pets</a>
                 <a class="active debug" onclick="logoutOwner()">Logout</a>
             </div>
+
             <div id="admin-activeSession-topnav">
                 <a id="admin-active-user-topnav" onclick="showAllUsers()">Show Users</a>
 <%--                <a onclick="showPetForm()">Pets</a>--%>

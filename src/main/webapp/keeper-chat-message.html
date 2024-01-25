@@ -1,0 +1,35 @@
+<form id="chat-message-form" style="width: 600px;"  target="_blank">
+
+	<h1 id="chat-messageHeader">Ask Something:</h1>
+	<label for="pet_id">Pet ID</label><br>
+	<div class="field booking_id">
+		<div class="input-area">
+			<i class="icon fa fa-fw fa-paw"></i>
+			<input id="pet_id"
+				   name="pet_id" disabled required>
+		</div>
+	</div>
+
+	<button  type="button" onclick="askChat('type');">Ask About Type</button>
+	<button type="button" onclick="askChat('breed');">Ask About Breed</button>
+
+	<br>
+	<h2>Message</h2>
+	<div class="field message">
+		<div class="input-area">
+			<textarea id="message" name="message" required></textarea>
+		</div>
+	</div>
+	<button type="button" onclick="askChat('normal');">Send Message!</button>
+
+	<div id="ring" class="ring">Loading
+		<span></span>
+	</div>
+
+	<h2>Response</h2>
+	<div class="field message">
+		<div class="input-area">
+			<textarea id="response" name="response" disabled></textarea>
+		</div>
+	</div>
+</form>

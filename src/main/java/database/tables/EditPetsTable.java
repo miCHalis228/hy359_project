@@ -245,6 +245,42 @@ public class EditPetsTable {
         return -1;
     }
 
+    public String getPetType(String pet_id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT type  FROM pets WHERE pet_id='" + pet_id + "'");
+
+            if (rs.next()) {
+                return rs.getString("type");
+            }
+            return null;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public String getPetBreed(String pet_id) throws SQLException, ClassNotFoundException {
+        Connection con = DB_Connection.getConnection();
+        Statement stmt = con.createStatement();
+        ResultSet rs;
+        try {
+            rs = stmt.executeQuery("SELECT breed, type  FROM pets WHERE pet_id='" + pet_id + "'");
+
+            if (rs.next()) {
+                return rs.getString("breed") + ' ' + rs.getString("type");
+            }
+            return null;
+        } catch (Exception e) {
+            System.err.println("Got an exception! ");
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
     public void updatePet(String id, String weight) throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();
@@ -262,8 +298,6 @@ public class EditPetsTable {
         stmt.close();
         con.close();
     }
-
-
 
     public void deletePet(String id) throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
