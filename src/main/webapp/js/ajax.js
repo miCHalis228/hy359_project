@@ -264,30 +264,39 @@ function isLoggedIn() {
         if (xhr.readyState === 4 && xhr.status === 200) {
             // $("#ajaxContent").html("Welcome again " + JSON.parse(xhr.responseText)["username"]);
             // $("#ajaxContent").append(createTableFromJSON(JSON.parse(xhr.responseText)));
-            if (xhr.responseText.includes("owner_id")){
-                $("#logged-user").load("activeOwnerSession.html", function () {
-                    setChoicesForLoggedOwner(JSON.parse(xhr.responseText));
-                    $("#welcome-message").html("<h2>Welcome again Owner " + JSON.parse(xhr.responseText)["username"] + "</h2>");
-                    $("#owner-user-fields-container").hide();
-                    $("#form-container").empty();
-                    $("#owner-activeSession-topnav").show();
-                });
-            } else if (xhr.responseText.includes("keeper_id")){
-                $("#logged-user").load("activeSession.html", function () {
-                    setChoicesForLoggedUser(JSON.parse(xhr.responseText));
-                    $("#welcome-message").html("<h2>Welcome again Keeper " + JSON.parse(xhr.responseText)["username"] + "</h2>");
-                    $("#user-fields-container").hide();
-                    $("#form-container").empty();
-                    $("#activeSession-topnav").show();
-                });
-            } else if (xhr.responseText.includes("admin_id")) {
-                $("#logged-user").load("activeSession.html", function () {
-                    setChoicesForLoggedAdmin(JSON.parse(xhr.responseText));
-                    $("#welcome-message").html("<h2>Welcome again admin " + JSON.parse(xhr.responseText)["username"] + "</h2>");
-                    $("#user-fields-container").hide();
-                    $("#form-container").empty();
-                    $("#admin-activeSession-topnav").show();
-                });
+            if(document.baseURI.includes("admin-login.html")){
+                if (xhr.responseText.includes("admin_id")) {
+                    $("#logged-user").load("activeSession.html", function () {
+                        setChoicesForLoggedAdmin(JSON.parse(xhr.responseText));
+                        $("#welcome-message").html("<h2>Welcome again admin " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+                        $("#user-fields-container").hide();
+                        $("#form-container").empty();
+                        $("#admin-activeSession-topnav").show();
+                    });
+                } else {
+                    $("#logged-user").html("<h2>USER ALREADY LOGGED IN (must logout from main website)</h2>");
+                    // location.reload();
+                }
+            } else {
+                if (xhr.responseText.includes("owner_id")){
+                    $("#logged-user").load("activeOwnerSession.html", function () {
+                        setChoicesForLoggedOwner(JSON.parse(xhr.responseText));
+                        $("#welcome-message").html("<h2>Welcome again Owner " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+                        $("#owner-user-fields-container").hide();
+                        $("#form-container").empty();
+                        $("#owner-activeSession-topnav").show();
+                    });
+                } else if (xhr.responseText.includes("keeper_id")){
+                    $("#logged-user").load("activeSession.html", function () {
+                        setChoicesForLoggedUser(JSON.parse(xhr.responseText));
+                        $("#welcome-message").html("<h2>Welcome again Keeper " + JSON.parse(xhr.responseText)["username"] + "</h2>");
+                        $("#user-fields-container").hide();
+                        $("#form-container").empty();
+                        $("#activeSession-topnav").show();
+                    });
+                } else {
+                    // location.reload();
+                }
             }
             $("#login-topnav").hide();
             $("#form-container").empty();
@@ -447,12 +456,12 @@ function logoutAdmin() {
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             // not sure if needed the below let them because it works
-            $("#login-topnav").show();
-            $("#admin-activeSession-topnav").hide();
-
+            // $("#login-topnav").show();
+            // $("#admin-activeSession-topnav").hide();
+            location.reload(true);
             $("#ajaxContent").html("Successful Admin Logout");
-            $("#form-container").load("login.html");
-            $("#logged-user").empty();
+            // $("#form-container").load("admin-login.html");
+            // $("#logged-user").empty();
         } else if (xhr.status !== 200) {
             alert('Request failed. Returned status of ' + xhr.status);
         }
@@ -859,104 +868,6 @@ function showKeepers() {
     xhr.setRequestHeader('Content-type', 'application/JSON');
     xhr.send();
 }
-
-/*------------------------AVAILABLE USERS--------------------------*/
-// function showAvailableKeepers(){
-//     var xhr = new XMLHttpRequest();
-//
-//     xhr.onload = function () {
-//         if (xhr.readyState === 4 && xhr.status === 200) {
-//             const parsedObjects = [];
-//             var jsonStrings = xhr.responseText.split('}{');
-//
-//             jsonStrings.forEach(function (jsonString, index) {
-//                 if (index > 0) {
-//                     jsonString = '{' + jsonString;
-//                 }
-//                 if (index < jsonStrings.length - 1) {
-//                     jsonString = jsonString + '}';
-//                 }
-//                 var jsonObject = JSON.parse(jsonString);
-//                 parsedObjects.push(jsonObject);
-//             });
-//             createAvailableKeeperTable(parsedObjects);
-//
-//             $('#owner-active-user-data').show();
-//             $('#owner-user-fields-container').hide();
-//             $("#welcome-message").html("");
-//             $('#ajaxContent').html("Successful retrieval.").removeClass('error');
-//             $('#ajaxContent').append(xhr.responseText);
-//         } else if (xhr.status !== 200) {
-//             $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
-//         }
-//     };
-//
-//     xhr.open('GET', 'OwnerAvailableKeepers');
-//     xhr.setRequestHeader('Content-type', 'application/JSON');
-//     xhr.send();
-// }
-
-// function createAvailableKeeperTable(data){
-//     const container = document.getElementById("owner-active-user-data");
-//     container.innerHTML="<div id='owner-petKeepersTable' style='border: 1px solid black'></div>";
-//     // Headers for Pet Keepers table
-//     const petKeeperHeaders = ['keeper_id',  'lastname', 'telephone',  'catkeeper',  'catprice',  'dogkeeper',  'dogprice'];
-//
-//     // Filter data for Pet Keepers
-//     const petKeeperData = data.filter(item => 'keeper_id' in item);
-//
-//     // Create Pet Keepers table
-//     createAvailableKeeperHtmlTable('owner-petKeepersTable', petKeeperHeaders, petKeeperData);
-// }
-
-// function createAvailableKeeperHtmlTable(containerId, headers, rows) {
-//     const container = document.getElementById(containerId);
-//     if (container===undefined) {console.log("returning");return;}
-//     // Create table element
-//     const table = document.createElement('table');
-//
-//     // Create table header
-//     const thead = document.createElement('thead');
-//     const headerRow = document.createElement('tr');
-//     headers.forEach(header => {
-//         const th = document.createElement('th');
-//         th.textContent = header;
-//         headerRow.appendChild(th);
-//     });
-//     //Delete header
-//     const th2 = document.createElement('th');
-//     th2.textContent = "Distance";
-//     headerRow.appendChild(th2);
-//     const th3 = document.createElement('th');
-//     th3.textContent = "Time By Car";
-//     headerRow.appendChild(th3);
-//
-//     thead.appendChild(headerRow);
-//     table.appendChild(thead);
-//
-//     // Create table body
-//     const tbody = document.createElement('tbody');
-//     rows.forEach(row => {
-//         const tr = document.createElement('tr');
-//         headers.forEach(header => {
-//             const td = document.createElement('td');
-//             td.textContent = row[header] || '';
-//             tr.appendChild(td);
-//         });
-//         // const td2 = document.createElement('td');
-//         // td2.innerHTML="<a href='#' class='userHref' onclick='bookKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Book ";
-//         // tr.appendChild(td2);
-//         // const td3 = document.createElement('td');
-//         // td3.innerHTML="<a href='#' class='userHref' onclick='reviewKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Review ";
-//         // tr.appendChild(td3);
-//
-//         tbody.appendChild(tr);
-//     });
-//     table.appendChild(tbody);
-//
-//     // Append the table to the container
-//     container.appendChild(table);
-// }
 
 // Function to add distance and drive time properties to each object in the array
 async function addDriveTimeProperty(objectsArray) {
