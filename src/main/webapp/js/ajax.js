@@ -669,7 +669,6 @@ function showUserCount() {
 
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            // $('#active-user-data').html(xhr.responseText)
             $('#active-user-data').show();
             $('#user-fields-container').hide();
             createUserCountChart(xhr.responseText);
@@ -678,11 +677,6 @@ function showUserCount() {
             $('#ajaxContent').append(xhr.responseText);
         } else if (xhr.status !== 200) {
             $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
-            // const responseData = JSON.parse(xhr.responseText);
-            // if (responseData !== "")
-            //     for (const x in responseData) {
-            //         $('#ajaxContent').append("<p style='color:red'>" + x + "=" + responseData[x] + "</p>");
-            //     }
             $('#ajaxContent').append(xhr.responseText);
         }
     };
@@ -864,112 +858,209 @@ function showKeepers() {
 }
 
 /*------------------------AVAILABLE USERS--------------------------*/
-function showAvailableKeepers(){
-    var xhr = new XMLHttpRequest();
+// function showAvailableKeepers(){
+//     var xhr = new XMLHttpRequest();
+//
+//     xhr.onload = function () {
+//         if (xhr.readyState === 4 && xhr.status === 200) {
+//             const parsedObjects = [];
+//             var jsonStrings = xhr.responseText.split('}{');
+//
+//             jsonStrings.forEach(function (jsonString, index) {
+//                 if (index > 0) {
+//                     jsonString = '{' + jsonString;
+//                 }
+//                 if (index < jsonStrings.length - 1) {
+//                     jsonString = jsonString + '}';
+//                 }
+//                 var jsonObject = JSON.parse(jsonString);
+//                 parsedObjects.push(jsonObject);
+//             });
+//             createAvailableKeeperTable(parsedObjects);
+//
+//             $('#owner-active-user-data').show();
+//             $('#owner-user-fields-container').hide();
+//             $("#welcome-message").html("");
+//             $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+//             $('#ajaxContent').append(xhr.responseText);
+//         } else if (xhr.status !== 200) {
+//             $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
+//         }
+//     };
+//
+//     xhr.open('GET', 'OwnerAvailableKeepers');
+//     xhr.setRequestHeader('Content-type', 'application/JSON');
+//     xhr.send();
+// }
 
-    xhr.onload = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            const parsedObjects = [];
-            var jsonStrings = xhr.responseText.split('}{');
+// function createAvailableKeeperTable(data){
+//     const container = document.getElementById("owner-active-user-data");
+//     container.innerHTML="<div id='owner-petKeepersTable' style='border: 1px solid black'></div>";
+//     // Headers for Pet Keepers table
+//     const petKeeperHeaders = ['keeper_id',  'lastname', 'telephone',  'catkeeper',  'catprice',  'dogkeeper',  'dogprice'];
+//
+//     // Filter data for Pet Keepers
+//     const petKeeperData = data.filter(item => 'keeper_id' in item);
+//
+//     // Create Pet Keepers table
+//     createAvailableKeeperHtmlTable('owner-petKeepersTable', petKeeperHeaders, petKeeperData);
+// }
 
-            jsonStrings.forEach(function (jsonString, index) {
-                if (index > 0) {
-                    jsonString = '{' + jsonString;
-                }
-                if (index < jsonStrings.length - 1) {
-                    jsonString = jsonString + '}';
-                }
-                var jsonObject = JSON.parse(jsonString);
-                parsedObjects.push(jsonObject);
-            });
-            createAvailableKeeperTable(parsedObjects);
+// function createAvailableKeeperHtmlTable(containerId, headers, rows) {
+//     const container = document.getElementById(containerId);
+//     if (container===undefined) {console.log("returning");return;}
+//     // Create table element
+//     const table = document.createElement('table');
+//
+//     // Create table header
+//     const thead = document.createElement('thead');
+//     const headerRow = document.createElement('tr');
+//     headers.forEach(header => {
+//         const th = document.createElement('th');
+//         th.textContent = header;
+//         headerRow.appendChild(th);
+//     });
+//     //Delete header
+//     const th2 = document.createElement('th');
+//     th2.textContent = "Distance";
+//     headerRow.appendChild(th2);
+//     const th3 = document.createElement('th');
+//     th3.textContent = "Time By Car";
+//     headerRow.appendChild(th3);
+//
+//     thead.appendChild(headerRow);
+//     table.appendChild(thead);
+//
+//     // Create table body
+//     const tbody = document.createElement('tbody');
+//     rows.forEach(row => {
+//         const tr = document.createElement('tr');
+//         headers.forEach(header => {
+//             const td = document.createElement('td');
+//             td.textContent = row[header] || '';
+//             tr.appendChild(td);
+//         });
+//         // const td2 = document.createElement('td');
+//         // td2.innerHTML="<a href='#' class='userHref' onclick='bookKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Book ";
+//         // tr.appendChild(td2);
+//         // const td3 = document.createElement('td');
+//         // td3.innerHTML="<a href='#' class='userHref' onclick='reviewKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Review ";
+//         // tr.appendChild(td3);
+//
+//         tbody.appendChild(tr);
+//     });
+//     table.appendChild(tbody);
+//
+//     // Append the table to the container
+//     container.appendChild(table);
+// }
 
-            $('#owner-active-user-data').show();
-            $('#owner-user-fields-container').hide();
-            $("#welcome-message").html("");
-            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
-            $('#ajaxContent').append(xhr.responseText);
-        } else if (xhr.status !== 200) {
-            $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
-        }
-    };
+// Function to add distance and drive time properties to each object in the array
+async function addDriveTimeProperty(objectsArray) {
+    const apiKey = 'fddeaf7166msh673ea9fc0bd5067p1cd0fejsn15aa102a192d';
 
-    xhr.open('GET', 'OwnerAvailableKeepers');
-    xhr.setRequestHeader('Content-type', 'application/JSON');
-    xhr.send();
-}
+    const originString = `${globalUserJson.lat},${globalUserJson.lon}`;
 
-function createAvailableKeeperTable(data){
-    const container = document.getElementById("owner-active-user-data");
-    container.innerHTML="<div id='owner-petKeepersTable' style='border: 1px solid black'></div>";
-    // Headers for Pet Keepers table
-    const petKeeperHeaders = ['keeper_id',  'lastname', 'telephone',  'catkeeper',  'catprice',  'dogkeeper',  'dogprice'];
+    // Create a comma-separated list of destination coordinates
+    const destinationString = objectsArray.map(dest => `${dest.lat},${dest.lon}`).join(';');
 
-    // Filter data for Pet Keepers
-    const petKeeperData = data.filter(item => 'keeper_id' in item);
+    // Construct the TrueWay API URL
+    const Url = `https://trueway-matrix.p.rapidapi.com/CalculateDrivingMatrix?origins=${originString};&destinations=${destinationString};`;
+    let apiUrl = Url.replace(/,/g, '%2C').replace(/;/g, '%3B');
 
-    // Create Pet Keepers table
-    createAvailableKeeperHtmlTable('owner-petKeepersTable', petKeeperHeaders, petKeeperData);
-}
-
-function createAvailableKeeperHtmlTable(containerId, headers, rows) {
-    const container = document.getElementById(containerId);
-    if (container===undefined) {console.log("returning");return;}
-    // Create table element
-    const table = document.createElement('table');
-
-    // Create table header
-    const thead = document.createElement('thead');
-    const headerRow = document.createElement('tr');
-    headers.forEach(header => {
-        const th = document.createElement('th');
-        th.textContent = header;
-        headerRow.appendChild(th);
-    });
-    //Delete header
-    const th1 = document.createElement('th');
-    th1.textContent = "Chat";
-    headerRow.appendChild(th1);
-    const th2 = document.createElement('th');
-    th2.textContent = "Book";
-    headerRow.appendChild(th2);
-    const th3 = document.createElement('th');
-    th3.textContent = "Review";
-    headerRow.appendChild(th3);
-
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    // Create table body
-    const tbody = document.createElement('tbody');
-    rows.forEach(row => {
-        const tr = document.createElement('tr');
-        headers.forEach(header => {
-            const td = document.createElement('td');
-            td.textContent = row[header] || '';
-            tr.appendChild(td);
+try {
+        const response = await fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'X-RapidAPI-Host': 'trueway-matrix.p.rapidapi.com',
+                'X-RapidAPI-Key': apiKey
+            }
         });
-        const td1 = document.createElement('td');
-        td1.innerHTML="<a href='#' class='userHref' onclick='chatWithKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Chat ";
-        tr.appendChild(td1);
-        const td2 = document.createElement('td');
-        td2.innerHTML="<a href='#' class='userHref' onclick='bookKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Book ";
-        tr.appendChild(td2);
-        const td3 = document.createElement('td');
-        td3.innerHTML="<a href='#' class='userHref' onclick='reviewKeeper(\"" + headers[0] + "\" ," + row[headers[0]] + ")'>Review ";
-        tr.appendChild(td3);
 
-        tbody.appendChild(tr);
+        const data = await response.json();
+
+        return objectsArray.map((obj,index) => {
+            const number = data.durations[0][index];
+            return { ...obj, 'timeByCar':number };
+        });
+        // Accessing driving times for each destination
+        // const drivingTimes = data.map(destination => destination.time);
+        // console.log(drivingTimes);
+
+        // return drivingTimes;
+    } catch (error) {
+        console.error('Error:', error);
+        return null;
+    }
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const earthRadius = 6371; // Earth radius in kilometers
+
+    const toRadians = (angle) => angle * (Math.PI / 180);
+
+    const dLat = toRadians(lat2 - lat1);
+    const dLon = toRadians(lon2 - lon1);
+
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return earthRadius * c;
+}
+function addDistanceProperty(objectsArray) {
+    const globalLat = parseFloat(globalUserJson.lat);
+    const globalLon = parseFloat(globalUserJson.lon);
+
+    return objectsArray.map((obj) => {
+        const { lat, lon } = obj;
+        const distance = calculateDistance(globalLat, globalLon, parseFloat(lat), parseFloat(lon));
+        return { ...obj, "distance":distance.toFixed(2) };
     });
-    table.appendChild(tbody);
+}
+async function calculateExtraDataForKeepers(data){
+    globalKeeperObject = addDistanceProperty(data);
+    globalKeeperObject = await addDriveTimeProperty(globalKeeperObject);
 
-    // Append the table to the container
-    container.appendChild(table);
+    return globalKeeperObject;
+    // return updatedData;
+}
+
+function sortKeepersByPrice(){
+    globalKeeperObject.sort((a,b)=>a.price-b.price);
+    createKeeperPricesTable(globalKeeperObject)
+}
+
+function sortKeepersByDistance(){
+    globalKeeperObject.sort((a,b)=>a.distance-b.distance);
+    createKeeperPricesTable(globalKeeperObject)
+}
+
+function sortKeepersByTimeByCar(){
+    globalKeeperObject.sort((a,b)=>a.timeByCar-b.timeByCar);
+    createKeeperPricesTable(globalKeeperObject)
 }
 
 function createKeeperPricesTable(data){
-    const petKeeperHeaders = ['keeper_id',  'lastname', 'telephone', 'price'];
-    createKeeperPriceHtmlTable('keeper-prices', petKeeperHeaders, data);
+    const petKeeperHeaders = ['keeper_id',  'lastname', 'telephone', 'price', 'lat','lon', 'distance','timeByCar'];
+    const updatedData = globalKeeperObject;
+    const container = document.getElementById('keeper-prices');
+    if (container !== undefined && container != null){
+        container.innerHTML="";
+        createKeeperPriceHtmlTable('keeper-prices', petKeeperHeaders, updatedData);
+    } else {
+        const container = document.getElementById("owner-active-user-data");
+        container.innerHTML="<h3>Sort Keepers</h3>" +
+            "<button onclick='sortKeepersByDistance()'>By Distance</button>" +
+            "<button onclick='sortKeepersByPrice()'>By Price</button>" +
+            "<button onclick='sortKeepersByTimeByCar()'>By Time By Car</button>" +
+            "<br>" +
+            "<div id='owner-petKeepersTable' style='border: 1px solid black'></div>";
+        createKeeperHtmlTable('owner-petKeepersTable', petKeeperHeaders, updatedData);
+    }
 }
 function createKeeperPriceHtmlTable(containerId, headers, rows) {
     const container = document.getElementById(containerId);
@@ -1305,20 +1396,20 @@ function showMyBookings(){
     xhr.send();
 }
 
-function createBookingTable(data){
-    const container = document.getElementById("booking-data");
-    container.innerHTML="my bookings";
-
-    const bookingHeaders = ['booking_id',  'owner_id', 'keeper_id',  'fromDate',  'toDate',  'status',  'price'];
-
-    const bookings = data.filter(item => item.status === "requested" || item.status ==="completed");
-
-    createAvailableKeeperHtmlTable('bookingsTable', bookingHeaders, bookings);
-
-    const activeBooking = data.filter(item => item.status === "accepted");
-
-    createAvailableKeeperHtmlTable('activeBookingsTable', bookingHeaders, activeBooking);
-}
+// function createBookingTable(data){
+//     const container = document.getElementById("booking-data");
+//     container.innerHTML="my bookings";
+//
+//     const bookingHeaders = ['booking_id',  'owner_id', 'keeper_id',  'fromDate',  'toDate',  'status',  'price'];
+//
+//     const bookings = data.filter(item => item.status === "requested" || item.status ==="completed");
+//
+//     createAvailableKeeperHtmlTable('bookingsTable', bookingHeaders, bookings);
+//
+//     const activeBooking = data.filter(item => item.status === "accepted");
+//
+//     createAvailableKeeperHtmlTable('activeBookingsTable', bookingHeaders, activeBooking);
+// }
 
 function showNewBookingForm(){
     const container = document.getElementById("booking-data");
@@ -1327,32 +1418,17 @@ function showNewBookingForm(){
         $('#keeper-prices-container').hide();
         $('#keeper-prices').html("");
     });
-    container.innerHTML="create booking";
 }
 
-function getAvailableKeepersPrices(){
+var globalKeeperObject = [];
+function getAvailableKeepersPrices(duration = 0){
     var xhr = new XMLHttpRequest();
-    const fromDateString = document.getElementById('fromDate').value;
-    const toDateString = document.getElementById('toDate').value;
 
-    if (fromDateString === undefined || fromDateString.length === 0
-        || toDateString === undefined || toDateString.length === 0){
-        alert('please select dates');
-        return;
-    }
-    const fromDate =new Date(fromDateString);
-    const toDate =new Date(toDateString);
-    if (fromDate > toDate){
-        alert('Choose later toDate');
-        return;
-    }
-    const timeDifference = toDate - fromDate;
-    const daysDifference = Math.floor(timeDifference / (24 * 60 * 60 * 1000));
-
-    xhr.onload = function () {
+    xhr.onload = async function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             console.log(xhr.responseText);
-            const parsedObjects = [];
+            /*theoretically emptying keepers*/
+            globalKeeperObject.splice(0, globalKeeperObject.length)
             var jsonStrings = xhr.responseText.split('}{');
 
             jsonStrings.forEach(function (jsonString, index) {
@@ -1363,14 +1439,21 @@ function getAvailableKeepersPrices(){
                     jsonString = jsonString + '}';
                 }
                 var jsonObject = JSON.parse(jsonString);
-                parsedObjects.push(jsonObject);
+                globalKeeperObject.push(jsonObject);
             });
-            createKeeperPricesTable(parsedObjects);
-            $('#booking-form').hide();
-            $('#keeper-prices-container').show();
-
-            $('#ajaxContent').html("Successful retrieval.").removeClass('error');
-            $('#ajaxContent').append(xhr.responseText);
+            try {
+                const updatedArray = await calculateExtraDataForKeepers(globalKeeperObject)
+                createKeeperPricesTable(updatedArray);
+                $('#owner-active-user-data').show();
+                $('#owner-user-fields-container').hide();
+                $("#welcome-message").html("");
+                $('#booking-form').hide();
+                $('#keeper-prices-container').show();
+                $('#ajaxContent').html("Successful retrieval.").removeClass('error');
+                $('#ajaxContent').append(xhr.responseText);
+            } catch (error) {
+                console.error('Error:', error);
+            }
         } else if (xhr.status !== 200) {
             $('#ajaxContent').append('Request failed. Returned status of ' + xhr.status + "<br>");
         }
@@ -1378,7 +1461,26 @@ function getAvailableKeepersPrices(){
 
     const params = new URLSearchParams();
     params.append('owner_id',globalUserJson.owner_id);
-    params.append('duration',daysDifference);
+    if (duration === 0){
+        const fromDateString = document.getElementById('fromDate').value;
+        const toDateString = document.getElementById('toDate').value;
+        if (fromDateString === undefined || fromDateString.length === 0
+            || toDateString === undefined || toDateString.length === 0){
+            alert('please select dates');
+            return;
+        }
+        const fromDate =new Date(fromDateString);
+        const toDate =new Date(toDateString);
+        if (fromDate > toDate){
+            alert('Choose later toDate');
+            return;
+        }
+        const timeDifference = toDate - fromDate;
+        const daysDifference = Math.floor(timeDifference / (24 * 60 * 60 * 1000));
+        params.append('duration',daysDifference);
+    } else {
+        params.append('duration',1);
+    }
     const paramsString = params.toString();
     xhr.open('GET', 'OwnerAvailableKeepersWithPrices?' + paramsString);
     xhr.setRequestHeader('Content-type', 'application/JSON');
@@ -1790,13 +1892,10 @@ function showKeeperNumberOfBookings() {
 
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            // $('#active-user-data').html(xhr.responseText)
             $('#active-user-data').show();
-            // $('#active-user-data').html(xhr.responseText);
             $('#user-fields-container').hide();
             $("#welcome-message").html("");
             createKeeperBookingsChart(xhr.responseText);
-            // createUserCountChart(xhr.responseText);
             $('#ajaxContent').html("Successful retrieval.").removeClass('error');
             $('#ajaxContent').append(xhr.responseText);
             //SECOND REQUEST
@@ -1815,11 +1914,9 @@ function showKeeperNumberOfBookings() {
 }
 
 function createKeeperBookingsChart(response_data){
-
     const data = JSON.parse(response_data);
 
     const dataTable = new google.visualization.DataTable();
-    // dataTable.addColumn('number', 'keeper_id');
     dataTable.addColumn('number', 'numberOfBookings');
     dataTable.addColumn('number', 'duration');
 
@@ -1882,33 +1979,20 @@ function showKeeperReviews(){
 
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
-            // $('#active-user-data').append(xhr.responseText);
             $('#ajaxContent').append(xhr.responseText);
             const parsedObjects = [];
-            // $('#active-user-data').html("Database Users")
-            // $("#active-user-data").append(xhr.responseText);
-            // Split the response text into an array of JSON strings
-            var jsonStrings = xhr.responseText.split('}{');
 
-            // Iterate over each JSON string, parse it, and add to the array
+            var jsonStrings = xhr.responseText.split('}{');
             jsonStrings.forEach(function (jsonString, index) {
-                // Add back the missing curly brace for all but the first string
                 if (index > 0) {
                     jsonString = '{' + jsonString;
                 }
-
-                // Add back the missing curly brace for all but the last string
                 if (index < jsonStrings.length - 1) {
                     jsonString = jsonString + '}';
                 }
-
-                // Parse the JSON string
                 var jsonObject = JSON.parse(jsonString);
-
-                // Add the parsed object to the array
                 parsedObjects.push(jsonObject);
             });
-
             createKeeperReviewTable(parsedObjects);
         } else if (xhr.status !== 200) {
             $('#active-user-data').html(xhr.responseText);

@@ -95,13 +95,13 @@ public class EditPetKeepersTable {
         try {
             //if(type=="catkeeper")
             if ("all".equals(type)){
-                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice FROM `petKeepers` WHERE  `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catkeeper, catprice ,dogkeeper, dogprice, lat, lon FROM `petKeepers` WHERE  `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             }
             else if ("catKeepers".equals(type)){
-                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catprice FROM `petKeepers` WHERE `petKeepers`.`catkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,catprice, lat, lon FROM `petKeepers` WHERE `petKeepers`.`catkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             }
             else if ("dogKeepers".equals(type)){
-                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,dogprice FROM `petKeepers` WHERE `petKeepers`.`dogkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
+                rs = stmt.executeQuery(String.format("SELECT keeper_id,lastname,telephone,dogprice, lat, lon FROM `petKeepers` WHERE `petKeepers`.`dogkeeper`='true' AND `petKeepers`.`keeper_id` not in (select keeper_id from `bookings` where `status`='requested' or  `status`='accepted')"));
             }
 
             while (rs.next()) {

@@ -21,12 +21,28 @@
 
 </form>
 <div id="keeper-prices-container">
-	<button type="button" onclick="goBackToBookingForm()">Go back to Form</button>
+	<br>
+	<div class="back" style="display: block" onclick="goBackToBookingForm()">
+		<i class="back icon fa fa-fw fa-chevron-left" aria-hidden="true" style="margin-left: 0; margin-bottom: 0;" ></i>
+		<a class="userHref">
+			Back
+		</a>
+	</div>
+<!--	<button type="button" onclick="goBackToBookingForm()">Go back to Form</button>-->
+	<h3>Sort Keepers</h3>
+	<button onclick='sortKeepersByDistance()'>By Distance</button>
+	<button onclick='sortKeepersByPrice()'>By Price</button>
+	<button onclick='sortKeepersByTimeByCar()'>By Time By Car</button>
+	<br>
 	<div id="keeper-prices"></div>
 </div>
 <script>
-	const currentDate = new Date().toISOString().split('T')[0];
-	document.getElementById('fromDate').min = currentDate;
-	document.getElementById('toDate').min = currentDate;
+	{
+		let currentDate = new Date().toISOString().split('T')[0];
+		document.getElementById('fromDate').min = currentDate;
+		document.getElementById('fromDate').value = currentDate;
+		document.getElementById('toDate').min = currentDate;
+	}
+
 </script>
 <div id="error"></div>

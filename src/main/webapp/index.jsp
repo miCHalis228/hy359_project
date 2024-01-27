@@ -38,21 +38,14 @@
                 <a onclick="showUserFields()">Update Profile</a>
                 <a onclick="showKeeperBookings()">Bookings</a>
                 <a onclick="showKeeperStats()">Stats</a>
-                <a onclick="showKeeperNumberOfBookings()">Number Of Bookings</a>
+<%--                <a onclick="showKeeperNumberOfBookings()">Number Of Bookings</a>--%>
                 <a class="active debug" onclick="logout()">Logout</a>
             </div>
 
             <div id="owner-activeSession-topnav">
                 <a id="owner-active-user-topnav" onclick="showOwner()">Profile</a>
                 <a onclick="showOwnerFields()">Update Profile</a>
-                <a onclick="showAvailableKeepers()">Available Keepers</a>
-<%--                <a class="dropdown dropbtn">Bookings_List--%>
-<%--&lt;%&ndash;                    <button class="dropbtn"></button>&ndash;%&gt;--%>
-<%--                    <div class="dropdown-content">--%>
-<%--                        <a onclick="showMyBookings()">My Bookings</a>--%>
-<%--                        <a onclick="showNewBookingForm()">New Booking</a>--%>
-<%--                    </div>--%>
-<%--                </a>--%>
+                <a onclick="getAvailableKeepersPrices(1)">Available Keepers</a>
                 <a onclick="showBookings()">Bookings</a>
                 <a onclick="showPetForm()">Pets</a>
                 <a class="active debug" onclick="logoutOwner()">Logout</a>
