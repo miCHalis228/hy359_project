@@ -28,7 +28,6 @@
         <header>
             <div class="topnav" id="topnav">
                 <a class="active" onclick="showMain()">Main</a>
-                <%--            <a id="forUsers" onclick="showLogin()">For Users</a>--%>
                 <div id="login-topnav">
                     <a onclick="showLogin()">Login</a>
                     <a onclick="showKeepers()">Keepers</a>
@@ -39,7 +38,6 @@
                     <a onclick="showUserFields()">Update Profile</a>
                     <a onclick="showKeeperBookings()">Bookings</a>
                     <a onclick="showKeeperStats()">Stats</a>
-                    <%--                <a onclick="showKeeperNumberOfBookings()">Number Of Bookings</a>--%>
                     <a class="active debug" onclick="logout()">Logout</a>
                 </div>
 
@@ -54,7 +52,6 @@
 
                 <div id="admin-activeSession-topnav">
                     <a id="admin-active-user-topnav" onclick="showAllUsers()">Show Users</a>
-                    <%--                <a onclick="showPetForm()">Pets</a>--%>
                     <a onclick="showCatsAndDogs()">Cats and Dogs</a>
                     <a onclick="showPetCareRevenue()">Revenue</a>
                     <a onclick="showUserCount()">User Count</a>
@@ -81,8 +78,6 @@
                             Register
                         </button>
                         <br><br>
-                        <%--                    <div id="form-container"--%>
-                        <%--                         class="form-container"></div>--%>
                     </div>
                     <div class="column column2Width" id="output" style="background-color:#fffff0;">
                         <h2>Output</h2>
