@@ -21,11 +21,11 @@ public class AdminRevenue extends HttpServlet {
         response.setStatus(200);
         try (PrintWriter out = response.getWriter()){
             EditBookingsTable editBookingsTable = new EditBookingsTable();
-            Map<String, Integer> revenue = editBookingsTable.getRevenue();
-            for(Map.Entry<String, Integer> entry : revenue.entrySet()){
+            Map<String, Float> revenue = editBookingsTable.getRevenue();
+            for(Map.Entry<String, Float> entry : revenue.entrySet()){
                 String keeper = entry.getKey();
-                Integer income = entry.getValue();
-                String jsonString = String.format("{\"keeper_id\":\"%s\",\"keeper_income\":%.2f,\"pet_care_income\":%.2f}",keeper,income*0.85, income*0.15);
+                Float income = entry.getValue();
+                String jsonString = String.format("{\"keeper_id\":\"%s\",\"keeper_income\":\"%.2f\",\"pet_care_income\":\"%.2f\"}",keeper,income*0.85, income*0.15);
                 out.write(jsonString);
             }
         } catch (SQLException e) {

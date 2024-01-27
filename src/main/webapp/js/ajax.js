@@ -642,6 +642,8 @@ function showPetCareRevenue() {
     xhr.onload = function () {
         if (xhr.readyState === 4 && xhr.status === 200) {
             // $('#active-user-data').html(xhr.responseText)
+            console.log(xhr.responseText);
+            // console.log(JSON.parse(xhr.responseText));
             $('#active-user-data').show();
             $('#user-fields-container').hide();
             $("#welcome-message").html("");
@@ -810,6 +812,7 @@ function createKeeperHtmlTable(containerId, headers, rows) {
 function createKeeperTable(data) {
     const container = document.getElementById("main-page-users");
 
+    if (container === undefined) {return;}
     container.innerHTML = "<button type='button' onClick='$(\"#main-page-users\").hide();'>Close!</button><div id='main-petKeepersTable' style='border: 1px solid black'></div>";
     // Headers for Pet Keepers table
     const petKeeperHeaders = ['keeper_id', 'username', 'lastname', 'telephone'];
@@ -1131,14 +1134,17 @@ function createRevenueChart(data) {
         // Parse the JSON string
         var jsonObject = JSON.parse(jsonString);
 
-        // Add the parsed object to the array
+        let floatStringValue = jsonObject.keeper_income;
+        floatStringValue = floatStringValue.replace(',', '.');
+        jsonObject.keeper_income = parseFloat(floatStringValue);
+
+        floatStringValue = jsonObject.pet_care_income;
+        floatStringValue = floatStringValue.replace(',', '.');
+        jsonObject.pet_care_income = parseFloat(floatStringValue);
+
         parsedObjects.push(jsonObject);
     });
     console.log(parsedObjects)
-    // const chart_data = google.visualization.arrayToDataTable([
-    //     ['Income', 'Keeper\'s', 'Pet Care\'', {role: 'annotation'}],
-    //     // [parseInt(jsonData["keeper_id"]), parseInt(jsonData["keeper_income"]), parseInt(jsonData["pet_care_income"]), ''],
-    // ]);
     const chart_data = new google.visualization.DataTable();
     chart_data.addColumn('string', 'Keeper');
     chart_data.addColumn('number', 'Income');

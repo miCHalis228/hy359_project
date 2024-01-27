@@ -98,16 +98,16 @@ public class EditBookingsTable {
         String json = gson.toJson(r, Booking.class);
         return json;
     }
-    public Map<String,Integer> getRevenue() throws SQLException, ClassNotFoundException {
+    public Map<String,Float> getRevenue() throws SQLException, ClassNotFoundException {
         Connection con = DB_Connection.getConnection();
         Statement stmt = con.createStatement();
-        Map<String, Integer> revenue = new HashMap<>();
+        Map<String, Float> revenue = new HashMap<>();
         ResultSet rs = null;
         try {
             rs = stmt.executeQuery("SELECT SUM(price) as sum, keeper_id FROM Bookings GROUP BY keeper_id");
             while (rs.next()) {
                 String json = DB_Connection.getResultsToJSON(rs);
-                revenue.put(rs.getString("keeper_id"), rs.getInt("sum"));
+                revenue.put(rs.getString("keeper_id"), rs.getFloat("sum"));
             }
             return revenue;
         } catch (Exception e) {

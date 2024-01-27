@@ -4,8 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="keywords" content="hy359, tsitsipas, foo, bar, michalis, csd, 3o etos">
-        <meta name="description" content="Assiginment 3 hy359">
-        <meta name="author" content="Michalis Ierodiakonou - csd4773">
+        <meta name="description" content="Project hy359">
+        <meta name="author" content="Michalis Ierodiakonou - csd4773, Chrystia Vasiliou - csd4848">
         <link rel="stylesheet" href="css/form.css">
         <link rel="stylesheet"
               href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -21,7 +21,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
-        <title>miCHalis DB</title>
+        <title>PetCare</title>
         <!-- <script src="jquery-3.7.1.min.js"></script> -->
     </head>
     <body>
@@ -94,6 +94,18 @@
         <div id="error-checking" style="display: none" class=""></div>
         <br>
         <div id="error-message" class="error error-message"></div>
+        <footer>
+            <div id="footer-container" class="footer-container">
+                <div id="footer" class="footer-section">
+                    <div class="social-icons" style="font-size: 30px">
+                        <a href="https://www.instagram.com/pets_friends.gr/?hl=en" target="_blank" title="Instagram"><i class="fa fa-fw fa-instagram"></i></a>
+                        <a href="https://twitter.com/i_pet_gr?lang=en" target="_blank" title="Twitter"><i class="fa fa-fw fa-twitter"></i></a>
+                        <a href="https://www.facebook.com/Pets.Friends.GR" target="_blank" title="Facebook"><i class="fa fa-fw fa-facebook"></i></a>
+                    </div>
+                    <p style="font-size: 10px">&copy; 2024 PetCare. All rights reserved. (Rights owned by Pets & Friends are excluded, they hold all their rights.)</p>
+                </div>
+            </div>
+        </footer>
     </body>
     <script src="js/form.js" defer></script>
     <script src="js/map.js" defer></script>
